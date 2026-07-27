@@ -1,67 +1,102 @@
-# Payload Blank Template
+# waitforit-site
 
-This template comes configured with the bare minimum to get started on anything you need.
+基于 [Payload](https://payloadcms.com/) 和 Next.js 的个人内容站。仓库从 Payload
+Blank Template 起步，使用 SQLite；Payload 提供内容模型、管理后台、认证和 API，
+Next.js 负责访客看到的前台页面。
 
-## Quick start
+当前阶段只建立可靠的开发与部署基线。文章、项目、标签、站点设置和最终视觉设计将在
+后续功能迭代中加入。
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+## 技术基线
 
-## Quick Start - local setup
+- Node.js 24
+- npm 11
+- Payload 3.86
+- Next.js 16.2
+- SQLite（本地、测试和当前自托管环境）
 
-To spin up this template locally, follow these steps:
+## 本地开发
 
-### Clone
+```bash
+git clone https://github.com/Lan-zk/waitforit-site.git
+cd waitforit-site
+npm ci
+cp .env.example .env
+openssl rand -hex 32
+```
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+把最后一条命令的输出填入 `.env` 的 `PAYLOAD_SECRET`，然后启动：
 
-### Development
+```bash
+mkdir -p data media
+npm run dev
+```
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+- 前台：<http://localhost:3000>
+- 管理后台：<http://localhost:3000/admin>
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+第一次打开管理后台时，只创建本地测试管理员。不要复制生产环境的 `.env`、数据库、
+管理员账号或上传文件。
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+## 验证
 
-#### Docker (Optional)
+日常提交前：
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+```bash
+npm run check
+```
 
-To do so, follow these steps:
+完整浏览器测试：
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
 
-## How it works
+单项命令：
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+```bash
+npm run lint
+npm run generate:types
+npm run test:int
+npm run build
+```
 
-### Collections
+## 数据库迁移
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+开发模式下，Payload 会将配置变化同步到本地 SQLite 沙箱。一个功能稳定后再生成迁移：
 
-- #### Users (Authentication)
+```bash
+npm run payload -- migrate:create descriptive-name
+```
 
-  Users are auth-enabled collections that have access to the admin panel.
+迁移文件与 `src/payload-types.ts` 应提交到 Git；`data/`、`media/` 和 `.env` 不应提交。
+生产部署前执行：
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/3.x/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+```bash
+npm run payload -- migrate
+```
 
-- #### Media
+## Docker 验证
 
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+本地日常开发优先使用 `npm run dev`。需要验证容器构建和生产启动时：
 
-### Docker
+```bash
+docker compose up --build
+```
 
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+Compose 只将服务绑定到 `127.0.0.1:3000`，并使用独立命名卷保存数据库和媒体。
 
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+## 仓库边界
 
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+可以公开：源码、迁移、类型、测试、通用部署文件和占位环境示例。
 
-## Questions
+不得提交：生产 `.env`、SQLite 数据库、媒体原件、备份、账号导出、Cookie、Token、
+SSH 密钥、证书和含真实服务器信息的运维日志。
 
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+更多说明见 [架构文档](docs/ARCHITECTURE.md)、[部署说明](docs/DEPLOYMENT.md) 和
+[安全政策](SECURITY.md)。
+
+## License
+
+[MIT](LICENSE)

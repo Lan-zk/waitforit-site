@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  DATABASE_URL: file:./data/ci.db
+  PAYLOAD_SECRET: ci-only-secret-not-for-production
+  NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: mkdir -p data media
+      - run: npm run lint
+      - run: npm run generate:types
+      - run: git diff --exit-code -- src/payload-types.ts
+      - run: npm run test:int
+      - run: npm run build
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: mkdir -p data media
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
