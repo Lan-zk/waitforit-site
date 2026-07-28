@@ -1,31 +1,43 @@
 import { getPayload } from 'payload'
 import React from 'react'
 
+import { ContentPage } from '@/components/ContentPage'
+import { getI18n } from '@/i18n/server'
 import config from '@/payload.config'
 
 export const dynamic = 'force-dynamic'
 
 export default async function BlogList() {
   const payload = await getPayload({ config })
-  const { docs } = await payload.find({
-    collection: 'posts',
-    depth: 0,
-    limit: 100,
-    sort: 'sortOrder',
-    select: { title: true, slug: true },
-  })
+  const [{ docs }, { dictionary, locale }] = await Promise.all([
+    payload.find({
+      collection: 'posts',
+      depth: 0,
+      limit: 100,
+      sort: 'sortOrder',
+      select: { title: true, slug: true },
+    }),
+    getI18n(),
+  ])
+
   return (
-    <main style={{ padding: '2rem', color: '#fff', background: '#000', minHeight: '100vh' }}>
-      <h1>Blog</h1>
-      <ul>
-        {docs.map((doc) => (
-          <li key={doc.id}>
-            <a href={`/blog/${doc.slug}`} style={{ color: '#ddfa42' }}>
-              {doc.title}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </main>
+    <ContentPage
+      homeLabel={dictionary.pages.backHome}
+      languageLabels={dictionary.language}
+      locale={locale}
+      title={dictionary.pages.blog}
+    >
+      {docs.length === 0 ? (
+        <p>{dictionary.pages.empty}</p>
+      ) : (
+        <ul>
+          {docs.map((doc) => (
+            <li key={doc.id}>
+              <a href={`/blog/${doc.slug}`}>{doc.title}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </ContentPage>
   )
 }

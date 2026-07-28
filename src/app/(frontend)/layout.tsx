@@ -1,17 +1,25 @@
+import type { Metadata } from 'next'
 import React from 'react'
+
+import { getI18n } from '@/i18n/server'
 
 import './globals.css'
 
-export const metadata = {
-  description: 'Personal site',
-  title: 'Wait For It',
+export async function generateMetadata(): Promise<Metadata> {
+  const { dictionary } = await getI18n()
+
+  return {
+    description: dictionary.metadata.description,
+    title: dictionary.metadata.title,
+  }
 }
 
-export default function RootLayout(props: { children: React.ReactNode }) {
+export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
+  const { locale } = await getI18n()
 
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>{children}</body>
     </html>
   )

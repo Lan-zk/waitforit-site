@@ -14,19 +14,27 @@ function SwappingLabel({ children }: { children: string }) {
 interface SiteFooterProps {
   email: string;
   indexHref: string;
+  labels: {
+    index: string;
+    overview: string;
+  };
 }
 
-export function SiteFooter({ email, indexHref }: SiteFooterProps) {
+export function SiteFooter({ email, indexHref, labels }: SiteFooterProps) {
   return (
     <footer className={styles.siteFooter}>
-      <a className={styles.emailLink} href={`mailto:${email}`}>
-        {email}
-      </a>
+      {email ? (
+        <a className={styles.emailLink} href={`mailto:${email}`}>
+          {email}
+        </a>
+      ) : (
+        <span aria-hidden="true" />
+      )}
 
-      <span className={styles.sceneLabel}>Overview</span>
+      <span className={styles.sceneLabel}>{labels.overview}</span>
 
       <a className={styles.indexLink} href={indexHref}>
-        <SwappingLabel>Index</SwappingLabel>
+        <SwappingLabel>{labels.index}</SwappingLabel>
       </a>
     </footer>
   );

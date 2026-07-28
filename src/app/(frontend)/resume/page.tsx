@@ -1,17 +1,27 @@
 import { getPayload } from 'payload'
 import React from 'react'
 
+import { ContentPage } from '@/components/ContentPage'
+import { getI18n } from '@/i18n/server'
 import config from '@/payload.config'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ResumePage() {
   const payload = await getPayload({ config })
-  const resume = await payload.findGlobal({ slug: 'resume' })
+  const [resume, { dictionary, locale }] = await Promise.all([
+    payload.findGlobal({ slug: 'resume' }),
+    getI18n(),
+  ])
+
   return (
-    <main style={{ padding: '2rem', color: '#fff', background: '#000', minHeight: '100vh' }}>
-      <h1>{resume?.title ?? 'Resume'}</h1>
-      <p>内容待补</p>
-    </main>
+    <ContentPage
+      homeLabel={dictionary.pages.backHome}
+      languageLabels={dictionary.language}
+      locale={locale}
+      title={resume?.title ?? dictionary.pages.resume}
+    >
+      <p>{dictionary.pages.shell}</p>
+    </ContentPage>
   )
 }

@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import React from 'react'
 
+import { ContentPage } from '@/components/ContentPage'
+import { getI18n } from '@/i18n/server'
 import config from '@/payload.config'
 
 export const dynamic = 'force-dynamic'
@@ -21,10 +23,16 @@ export default async function ProjectDetail({
   })
   const doc = docs[0]
   if (!doc) notFound()
+  const { dictionary, locale } = await getI18n()
+
   return (
-    <main style={{ padding: '2rem', color: '#fff', background: '#000', minHeight: '100vh' }}>
-      <h1>{doc.title}</h1>
-      <p>内容待补</p>
-    </main>
+    <ContentPage
+      homeLabel={dictionary.pages.backHome}
+      languageLabels={dictionary.language}
+      locale={locale}
+      title={doc.title}
+    >
+      <p>{dictionary.pages.shell}</p>
+    </ContentPage>
   )
 }

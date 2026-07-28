@@ -29,7 +29,8 @@
 .leftGroup,
 .rightGroup,
 .wordmark,
-.mobileHeader {
+.mobileHeader,
+.languageSwitcher {
   pointer-events: auto;
 }
 
@@ -141,6 +142,53 @@
   white-space: nowrap;
 }
 
+.languageSwitcher {
+  display: flex;
+  min-width: 76px;
+  height: 32.5px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding-inline: 10px;
+  border-radius: 87.8873px;
+  background: rgb(255 255 255 / 10%);
+  color: rgb(255 255 255 / 55%);
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.languageSwitcher button {
+  border: 0;
+  padding: 5px 2px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  transition: color 200ms ease;
+}
+
+.languageSwitcher button:hover,
+.languageSwitcher button:focus-visible,
+.languageSwitcher .activeLanguage {
+  color: #fff;
+}
+
+.languageSwitcher button:focus-visible {
+  border-radius: 3px;
+  outline: 2px solid #ddfa42;
+  outline-offset: 2px;
+}
+
+.standaloneLanguageSwitcher {
+  position: fixed;
+  top: 32px;
+  right: clamp(24px, 3.784vw, 72px);
+  z-index: 2100;
+  background: rgb(255 255 255 / 14%);
+  pointer-events: auto;
+}
+
 .desktopTime {
   min-width: 74px;
 }
@@ -200,13 +248,28 @@
     width: 32px;
     height: 32px;
   }
+
+  .mobileLanguageSwitcher {
+    position: absolute;
+    top: 38px;
+    right: 27px;
+    min-width: 72px;
+    height: 34px;
+    background: rgb(255 255 255 / 14%);
+  }
+
+  .standaloneLanguageSwitcher {
+    top: 24px;
+    right: 24px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .homeLink,
   .brandMark,
   .pill,
-  .labelTrack {
+  .labelTrack,
+  .languageSwitcher button {
     transition-duration: 0.01ms;
   }
 }

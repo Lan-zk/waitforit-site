@@ -52,7 +52,13 @@ body {
 
 body {
   overflow: hidden;
-  font-family: "FK Display", Arial, Helvetica, sans-serif;
+  font-family:
+    "FK Display",
+    "PingFang SC",
+    "Microsoft YaHei",
+    Arial,
+    Helvetica,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 

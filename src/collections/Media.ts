@@ -1,18 +1,26 @@
 import type { CollectionConfig } from 'payload'
 
+import { adminLabel } from '@/i18n/admin'
+
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: adminLabel('Media item', '媒体文件'),
+    plural: adminLabel('Media', '媒体'),
+  },
   access: {
     read: () => true,
   },
   fields: [
     {
       name: 'alt',
+      label: adminLabel('Alternative text', '替代文本'),
       type: 'text',
       required: true,
     },
     {
       name: 'caption',
+      label: adminLabel('Caption', '图片说明'),
       type: 'textarea',
     },
   ],

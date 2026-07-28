@@ -1,0 +1,75 @@
+.page {
+  position: fixed;
+  inset: 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: clamp(88px, 10vw, 144px) clamp(24px, 6vw, 96px) 64px;
+  background: #000;
+  color: #fff;
+}
+
+.homeLink {
+  position: fixed;
+  top: 36px;
+  left: clamp(24px, 3.784vw, 72px);
+  z-index: 2100;
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgb(255 255 255 / 10%);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.homeLink:hover,
+.homeLink:focus-visible {
+  background: #ddfa42;
+  color: #000;
+}
+
+.homeLink:focus-visible {
+  outline: 2px solid #ddfa42;
+  outline-offset: 3px;
+}
+
+.title {
+  max-width: 18ch;
+  margin: 0 0 32px;
+  overflow-wrap: anywhere;
+  font-size: clamp(42px, 8vw, 112px);
+  font-weight: 400;
+  line-height: 0.94;
+}
+
+.content {
+  max-width: 72ch;
+  overflow-wrap: anywhere;
+  font-family: "Mabry", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.6;
+}
+
+.content ul {
+  margin: 0;
+  padding-inline-start: 1.25em;
+}
+
+.content li + li {
+  margin-block-start: 0.55em;
+}
+
+.content a {
+  color: #ddfa42;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+@media (max-width: 767px) {
+  .homeLink {
+    top: 24px;
+    left: 24px;
+  }
+}

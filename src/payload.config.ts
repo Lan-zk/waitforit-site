@@ -1,5 +1,7 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { en } from '@payloadcms/translations/languages/en'
+import { zh } from '@payloadcms/translations/languages/zh'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -29,6 +31,10 @@ export default buildConfig({
   },
   collections: [Users, Media, Projects, Posts, Novels, Photography],
   globals: [Resume, SiteSettings, Header, Footer],
+  i18n: {
+    fallbackLanguage: 'zh',
+    supportedLanguages: { zh, en },
+  },
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

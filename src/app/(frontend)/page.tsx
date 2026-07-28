@@ -5,6 +5,8 @@ import { GradientOverlays } from '@/components/GradientOverlays'
 import { ProjectScene } from '@/components/ProjectScene'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
+import { getNavigationLabel } from '@/i18n/dictionaries'
+import { getI18n } from '@/i18n/server'
 import config from '@/payload.config'
 import { getManifest } from '@/utilities/getManifest'
 
@@ -13,16 +15,18 @@ export const dynamic = 'force-dynamic'
 export default async function HomePage() {
   const payload = await getPayload({ config })
 
-  const [manifest, header, footer, settings] = await Promise.all([
+  const [manifest, header, footer, settings, i18n] = await Promise.all([
     getManifest(),
     payload.findGlobal({ slug: 'header' }),
     payload.findGlobal({ slug: 'footer' }),
     payload.findGlobal({ slug: 'site-settings' }),
+    getI18n(),
   ])
 
+  const { dictionary, locale } = i18n
   const nav = (header?.nav ?? []).map((item) => ({
-    label: item.label ?? '',
     href: item.href ?? '',
+    label: getNavigationLabel(dictionary, item.href ?? '', item.label ?? ''),
   }))
   const brandName = settings?.name ?? 'Wait For It'
   const contactHref = settings?.email ? `mailto:${settings.email}` : '/'
@@ -33,8 +37,24 @@ export default async function HomePage() {
     <>
       <ProjectScene projects={manifest} />
       <GradientOverlays />
-      <SiteHeader nav={nav} brandName={brandName} contactHref={contactHref} />
-      <SiteFooter email={email} indexHref={indexHref} />
+      <SiteHeader
+        brandName={brandName}
+        contactHref={contactHref}
+        labels={{
+          contact: dictionary.navigation.contact,
+          home: dictionary.navigation.home,
+          language: dictionary.language,
+          localTime: dictionary.time.localTime,
+          navigation: dictionary.navigation.ariaLabel,
+        }}
+        locale={locale}
+        nav={nav}
+      />
+      <SiteFooter
+        email={email}
+        indexHref={indexHref}
+        labels={dictionary.footer}
+      />
     </>
   )
 }
