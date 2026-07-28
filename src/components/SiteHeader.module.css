@@ -1,0 +1,212 @@
+.siteHeader {
+  position: fixed;
+  top: 36px;
+  right: 0;
+  left: 0;
+  z-index: 2000;
+  color: #fff;
+  pointer-events: none;
+}
+
+.desktopHeader {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5.27324px;
+  padding: 0 clamp(27px, 3.784vw, 72px);
+}
+
+.leftGroup,
+.rightGroup,
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 5.27324px;
+}
+
+.leftGroup,
+.rightGroup,
+.wordmark,
+.mobileHeader {
+  pointer-events: auto;
+}
+
+.homeLink {
+  display: grid;
+  width: 31.625px;
+  height: 32.5px;
+  flex: 0 0 auto;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 10%);
+  transition:
+    color 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.homeLink:hover,
+.homeLink:focus-visible {
+  color: #000;
+  background: #ddfa42;
+}
+
+.homeLink:hover .brandMark,
+.homeLink:focus-visible .brandMark {
+  transform: rotate(45deg);
+}
+
+.brandMark {
+  width: 18.45px;
+  height: 18.45px;
+  opacity: 0.7;
+  transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pill {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  flex: 0 0 auto;
+  padding: 9.22817px 15.8197px 8.78873px;
+  border-radius: 87.8873px;
+  background: rgb(255 255 255 / 10%);
+  color: #fff;
+  font-size: 14.062px;
+  font-weight: 400;
+  line-height: 15.4682px;
+  transition:
+    color 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.labelTrack {
+  position: relative;
+  display: block;
+  height: 15.4682px;
+  overflow: hidden;
+}
+
+.labelTrack > span {
+  display: block;
+  height: 15.4682px;
+  white-space: nowrap;
+  transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.labelTrack > span:nth-child(2) {
+  position: absolute;
+  top: 100%;
+  left: 0;
+}
+
+.pill:hover,
+.pill:focus-visible {
+  color: #000;
+  background: #ddfa42;
+}
+
+.pill:hover .labelTrack > span,
+.pill:focus-visible .labelTrack > span {
+  transform: translateY(-100%);
+}
+
+.wordmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  white-space: nowrap;
+  font-size: 19.3352px;
+  font-weight: 400;
+  line-height: 19.3352px;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%);
+}
+
+.timeCapsule {
+  display: flex;
+  min-width: 114px;
+  height: 32.5px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px 0 15px;
+  border-radius: 87.8873px;
+  background: rgb(255 255 255 / 10%);
+  font-size: 14.062px;
+  line-height: 15.4682px;
+  white-space: nowrap;
+}
+
+.desktopTime {
+  min-width: 74px;
+}
+
+.globeIcon {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  opacity: 0.75;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.85;
+}
+
+.mobileHeader {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .siteHeader {
+    top: 0;
+  }
+
+  .desktopHeader {
+    display: none;
+  }
+
+  .mobileHeader {
+    display: block;
+  }
+
+  .mobileTime {
+    position: absolute;
+    top: 46px;
+    left: 27px;
+    font-size: 17px;
+    line-height: 18px;
+    white-space: nowrap;
+  }
+
+  .mobileHomeLink {
+    position: absolute;
+    top: 27px;
+    left: 62.5vw;
+    width: 54px;
+    height: 54px;
+    transform: translateX(-50%);
+  }
+
+  .mobileHomeLink:hover,
+  .mobileHomeLink:focus-visible {
+    transform: translateX(-50%);
+  }
+
+  .mobileHomeLink .brandMark {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homeLink,
+  .brandMark,
+  .pill,
+  .labelTrack {
+    transition-duration: 0.01ms;
+  }
+}

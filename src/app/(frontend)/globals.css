@@ -1,0 +1,72 @@
+:root {
+  color-scheme: dark;
+}
+
+@font-face {
+  font-family: "Mabry";
+  src: url("/fonts/mabry-400.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mabry";
+  src: url("/fonts/mabry-500.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FK Display";
+  src: url("/fonts/fk-display-400.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --page-bg: #000;
+  --ink: #fff;
+  --glass: rgb(255 255 255 / 10%);
+  --glass-hover: #ddfa42;
+  --lime: #ddfa42;
+  --edge: rgb(255 255 255 / 24%);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--ink);
+  overscroll-behavior: none;
+}
+
+body {
+  overflow: hidden;
+  font-family: "FK Display", Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  color: #000;
+  background: var(--lime);
+}

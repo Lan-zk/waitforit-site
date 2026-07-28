@@ -63,3 +63,10 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# reference clone build artifacts
+/docs/gabrielveres/.next/
+
+# local tooling
+.codegraph/
+bash.exe.stackdump
