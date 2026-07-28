@@ -1,0 +1,4 @@
+interface:
+  display_name: "Check Payload Upgrade"
+  short_description: "Assess Payload version and package compatibility"
+  default_prompt: "Use $payload-check-upgrade to assess a Payload upgrade before changing dependencies."

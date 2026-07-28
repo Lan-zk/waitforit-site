@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage Payload Schema Change"
+  short_description: "Safely change schema types migrations and tests"
+  default_prompt: "Use $payload-manage-schema-change to implement and verify a Payload schema change."

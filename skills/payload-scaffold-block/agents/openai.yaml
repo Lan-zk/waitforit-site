@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scaffold Payload Block"
+  short_description: "Create matched Payload blocks and renderers"
+  default_prompt: "Use $payload-scaffold-block to add a reusable page or rich-text block."

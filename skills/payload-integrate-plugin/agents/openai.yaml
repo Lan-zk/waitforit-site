@@ -1,0 +1,4 @@
+interface:
+  display_name: "Integrate Payload Plugin"
+  short_description: "Install and wire official Payload plugins safely"
+  default_prompt: "Use $payload-integrate-plugin to integrate an official plugin into this site."

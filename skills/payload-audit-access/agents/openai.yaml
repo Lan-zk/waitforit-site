@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audit Payload Access"
+  short_description: "Audit Payload auth access and public data paths"
+  default_prompt: "Use $payload-audit-access to review the security boundaries of this Payload site."

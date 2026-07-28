@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wire Payload Publishing"
+  short_description: "Add drafts previews publishing and revalidation"
+  default_prompt: "Use $payload-wire-publishing to add a safe publishing workflow to a collection."

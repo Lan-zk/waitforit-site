@@ -1,0 +1,4 @@
+interface:
+  display_name: "Model Payload Content"
+  short_description: "Create typed Payload content models safely"
+  default_prompt: "Use $payload-model-content to add a content model to this Payload site."
