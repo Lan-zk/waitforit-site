@@ -70,3 +70,6 @@ node_modules/
 # local tooling
 .codegraph/
 bash.exe.stackdump
+
+# Playwright MCP tooling logs
+/.playwright-mcp/

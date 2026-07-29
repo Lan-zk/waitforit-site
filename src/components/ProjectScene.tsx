@@ -16,6 +16,42 @@ const TEXTURE_SLOT_END = 10.25;
 const MAX_TEXTURES = 20;
 const MIN_RENDER_INSTANCES = 20;
 
+// Card sizing: shrink every card toward a shared factor, then clamp the result
+// into a per-breakpoint [min, max] band so sizes vary without becoming chaotic.
+const CARD_WIDTH_SCALE = 0.7;
+const DESKTOP_CARD_MIN_WIDTH = 15;
+const DESKTOP_CARD_MAX_WIDTH = 30;
+const MOBILE_CARD_MIN_WIDTH = 46;
+const MOBILE_CARD_MAX_WIDTH = 96;
+
+// Trajectory framing: recentre the visible band on the screen middle, spread
+// the (now smaller) cards out so neighbours keep clear gaps, and lift the band
+// upward. The pivot is the band's natural centre of mass; scaling around it
+// recentres while scale > 1 opens up the spacing.
+const HORIZONTAL_CENTER = 50;
+const DESKTOP_TRAJECTORY_PIVOT_X = 58;
+const MOBILE_TRAJECTORY_PIVOT_X = 70;
+const DESKTOP_TRAJECTORY_SCALE_X = 0.8;
+const MOBILE_TRAJECTORY_SCALE_X = 1.08;
+const DESKTOP_TRAJECTORY_PIVOT_Y = 44;
+const MOBILE_TRAJECTORY_PIVOT_Y = 44;
+const DESKTOP_TRAJECTORY_SCALE_Y = 0.8;
+const MOBILE_TRAJECTORY_SCALE_Y = 1.08;
+const DESKTOP_VERTICAL_LIFT = 7;
+const MOBILE_VERTICAL_LIFT = 4;
+
+// Coherent ribbon tilt (degrees). A consistent yaw turns every card so the
+// strip reads as receding into the distance, a slight lean tips them back, and
+// the raw in-plane wobble is damped so the arrangement feels ordered rather
+// than scattered. The small TILT_VARIATION keeps a hint of the original pose.
+const RIBBON_YAW_Y = -30;
+const RIBBON_LEAN_X = -5;
+const TILT_VARIATION = 0.35;
+const SCATTER_SCALE = 0.3;
+
+// Glass treatment: cards render as translucent panels with a subtle sheen.
+const GLASS_MAX_OPACITY = 0.85;
+
 type Placement = {
   x: number;
   y: number;
@@ -295,13 +331,54 @@ function placementForSlot(slot: number, mobile: boolean): Placement {
   };
 }
 
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+// Reframe a raw placement: shrink the card around its own center, clamp its
+// width into the allowed band, recentre and spread the band so neighbours keep
+// clear gaps, lift it upward, and rebase the tilt onto a coherent ribbon.
+// Applied uniformly so extrapolated slots match.
+function adjustPlacement(placement: Placement, mobile: boolean): Placement {
+  const minWidth = mobile ? MOBILE_CARD_MIN_WIDTH : DESKTOP_CARD_MIN_WIDTH;
+  const maxWidth = mobile ? MOBILE_CARD_MAX_WIDTH : DESKTOP_CARD_MAX_WIDTH;
+  const pivotX = mobile
+    ? MOBILE_TRAJECTORY_PIVOT_X
+    : DESKTOP_TRAJECTORY_PIVOT_X;
+  const scaleX = mobile
+    ? MOBILE_TRAJECTORY_SCALE_X
+    : DESKTOP_TRAJECTORY_SCALE_X;
+  const pivotY = mobile
+    ? MOBILE_TRAJECTORY_PIVOT_Y
+    : DESKTOP_TRAJECTORY_PIVOT_Y;
+  const scaleY = mobile
+    ? MOBILE_TRAJECTORY_SCALE_Y
+    : DESKTOP_TRAJECTORY_SCALE_Y;
+  const lift = mobile ? MOBILE_VERTICAL_LIFT : DESKTOP_VERTICAL_LIFT;
+
+  const centerX = placement.x + placement.width / 2;
+  const width = clamp(placement.width * CARD_WIDTH_SCALE, minWidth, maxWidth);
+  const x = HORIZONTAL_CENTER + (centerX - pivotX) * scaleX - width / 2;
+  const y = pivotY + (placement.y - pivotY) * scaleY - lift;
+
+  return {
+    ...placement,
+    width,
+    x,
+    y,
+    rotateX: RIBBON_LEAN_X + placement.rotateX * TILT_VARIATION,
+    rotateY: RIBBON_YAW_Y + placement.rotateY * TILT_VARIATION,
+    rotateZ: placement.rotateZ * SCATTER_SCALE,
+  };
+}
+
 function placementAt(relativeSlot: number, mobile: boolean): Placement {
   const lowerSlot = Math.floor(relativeSlot);
   const amount = relativeSlot - lowerSlot;
   const lower = placementForSlot(lowerSlot, mobile);
   const upper = placementForSlot(lowerSlot + 1, mobile);
 
-  return {
+  const interpolated: Placement = {
     x: interpolate(lower.x, upper.x, amount),
     y: interpolate(lower.y, upper.y, amount),
     width: interpolate(lower.width, upper.width, amount),
@@ -310,6 +387,8 @@ function placementAt(relativeSlot: number, mobile: boolean): Placement {
     rotateY: interpolate(lower.rotateY, upper.rotateY, amount),
     rotateZ: interpolate(lower.rotateZ, upper.rotateZ, amount),
   };
+
+  return adjustPlacement(interpolated, mobile);
 }
 
 function wrappedRelativeSlot(index: number, progress: number, projects: ProjectTexture[]) {
@@ -454,17 +533,42 @@ export function ProjectScene({
 
     const camera = new THREE.PerspectiveCamera();
     const geometry = new THREE.PlaneGeometry(1, 1);
-    const materials = renderProjects.map(
-      () =>
-        new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0,
-          depthTest: true,
-          depthWrite: true,
-        }),
-    );
+    const materials = renderProjects.map(() => {
+      const material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        // Cards only tilt a few degrees, so the front face always points at the
+        // camera. FrontSide avoids the two faces of a translucent plane blending
+        // over each other, which would make the glass look opaque again.
+        side: THREE.FrontSide,
+        transparent: true,
+        opacity: 0,
+        depthTest: true,
+        // Translucent panels must not write depth, otherwise nearer cards would
+        // hide the ones behind them instead of letting them show through.
+        depthWrite: false,
+      });
+
+      // Inject a subtle glass sheen: a soft top glow plus a diagonal glossy
+      // streak, driven by the card's own UVs so it sticks to the artwork.
+      material.onBeforeCompile = (shader) => {
+        shader.fragmentShader = shader.fragmentShader.replace(
+          "#include <opaque_fragment>",
+          `#ifdef USE_MAP
+            float glassTopGlow = smoothstep(0.35, 1.0, vMapUv.y) * 0.035;
+            float glassDiag = vMapUv.x + (1.0 - vMapUv.y);
+            float glassBand =
+              smoothstep(0.15, 0.75, glassDiag) *
+              smoothstep(1.35, 0.75, glassDiag);
+            float glassStreak = pow(glassBand, 2.0) * 0.1;
+            outgoingLight += vec3(glassTopGlow + glassStreak);
+          #endif
+
+          #include <opaque_fragment>`,
+        );
+      };
+
+      return material;
+    });
     const meshes = renderProjects.map((project, index) => {
       const mesh = new THREE.Mesh(geometry, materials[index]);
       mesh.visible = false;
@@ -700,7 +804,7 @@ export function ProjectScene({
           THREE.MathUtils.degToRad(-placement.rotateZ),
         );
         mesh.scale.set(world.width, world.height, 1);
-        material.opacity = Math.min(1, edgeFade * 1.75);
+        material.opacity = Math.min(1, edgeFade * 1.75) * GLASS_MAX_OPACITY;
         nextVisibleMeshes.push(mesh);
       });
 
