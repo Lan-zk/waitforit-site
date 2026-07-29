@@ -80,7 +80,7 @@
   transform: translateY(-17.4017px);
 }
 
-@media (max-width: 767px) {
+@media (width < 768px) {
   .siteFooter {
     display: none;
   }

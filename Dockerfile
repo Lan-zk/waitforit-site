@@ -20,6 +20,23 @@ ENV PAYLOAD_SECRET=build-only-secret-not-for-runtime
 
 RUN mkdir -p data media && npm run build
 
+FROM base AS content-sync
+
+ENV NODE_ENV=production
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY --chown=node:node . .
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends git \
+  && rm -rf /var/lib/apt/lists/* \
+  && mkdir -p data media \
+  && chown -R node:node /app/data /app/media
+
+USER node
+
+CMD ["npm", "run", "content:sync:if-changed"]
+
 FROM base AS runner
 
 ENV NODE_ENV=production

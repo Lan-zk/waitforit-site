@@ -1,0 +1,12 @@
+[Unit]
+Description=Pull waitforit-site content and synchronize Payload metadata
+Wants=network-online.target
+After=network-online.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/waitforit/content-sync.env
+ExecStart=/usr/bin/git -C ${CONTENT_REPO_HOST_PATH} pull --ff-only
+ExecStart=/usr/bin/docker compose --project-directory ${SITE_COMPOSE_DIR} --profile tools run --rm content-sync
+TimeoutStartSec=5min

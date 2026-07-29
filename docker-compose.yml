@@ -7,12 +7,14 @@ services:
     env_file:
       - .env
     environment:
+      CONTENT_REPO_ROOT: /content
       DATABASE_URL: file:./data/payload.db
     ports:
       - '127.0.0.1:3000:3000'
     volumes:
       - payload_data:/app/data
       - payload_media:/app/media
+      - ${CONTENT_REPO_HOST_PATH:-../waitforit-site-content}:/content:ro
     healthcheck:
       test:
         [
@@ -25,6 +27,26 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
+
+  content-sync:
+    profiles:
+      - tools
+    build:
+      context: .
+      target: content-sync
+    image: waitforit-site-content-sync:local
+    restart: 'no'
+    env_file:
+      - .env
+    environment:
+      CONTENT_REPO_ROOT: /content
+      CONTENT_SYNC_STATE_FILE: /app/data/content-sync-last-successful-sha
+      DATABASE_URL: file:./data/payload.db
+      NODE_ENV: production
+    volumes:
+      - payload_data:/app/data
+      - payload_media:/app/media
+      - ${CONTENT_REPO_HOST_PATH:-../waitforit-site-content}:/content:ro
 
 volumes:
   payload_data:

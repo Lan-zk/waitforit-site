@@ -14,6 +14,7 @@ const VISIBLE_SLOT_END = 7.15;
 const TEXTURE_SLOT_START = -8.25;
 const TEXTURE_SLOT_END = 10.25;
 const MAX_TEXTURES = 20;
+const MIN_RENDER_INSTANCES = 20;
 
 type Placement = {
   x: number;
@@ -323,6 +324,17 @@ function cameraDistance(mobile: boolean) {
   return mobile ? 1150 : 1500;
 }
 
+function buildRenderProjects(projects: ProjectTexture[]) {
+  if (projects.length === 0 || projects.length >= MIN_RENDER_INSTANCES) {
+    return projects;
+  }
+
+  return Array.from(
+    { length: MIN_RENDER_INSTANCES },
+    (_, index) => projects[index % projects.length],
+  );
+}
+
 function configureCamera(
   camera: THREE.PerspectiveCamera,
   width: number,
@@ -370,26 +382,56 @@ function worldPositionForPlacement(
   };
 }
 
-export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
+interface ProjectSceneLabels {
+  explore: string;
+  projectLinks: string;
+  selectedProjects: string;
+}
+
+export function ProjectScene({
+  labels,
+  projects,
+}: {
+  labels: ProjectSceneLabels;
+  projects: ProjectTexture[];
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hoverLabelRef = useRef<HTMLDivElement>(null);
+  const interactionHintRef = useRef<HTMLParagraphElement>(null);
+  const mobileCardLinkRef = useRef<HTMLAnchorElement>(null);
+  const accessibleProjects = Array.from(
+    new Map(projects.map((project) => [project.slug, project])).values(),
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const hoverLabel = hoverLabelRef.current;
+    const interactionHint = interactionHintRef.current;
+    const mobileCardLink = mobileCardLinkRef.current;
 
-    if (!canvas || !hoverLabel) {
+    if (!canvas || !hoverLabel || !interactionHint || !mobileCardLink) {
       return;
     }
 
+    const renderProjects = buildRenderProjects(projects);
+    canvas.dataset.webglUnavailable = "false";
+    canvas.dataset.contextState = "initializing";
+    canvas.dataset.sceneInstanceCount = String(renderProjects.length);
+    canvas.dataset.sceneVisibleCount = "0";
+    canvas.dataset.textureCount = "0";
     const context = canvas.getContext("webgl2", {
       alpha: false,
       antialias: true,
       powerPreference: "high-performance",
     });
 
-    if (!context) {
+    if (
+      !context ||
+      context.isContextLost() ||
+      context.getContextAttributes() === null
+    ) {
       canvas.dataset.webglUnavailable = "true";
+      canvas.dataset.contextState = "unavailable";
       return;
     }
 
@@ -412,7 +454,7 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
 
     const camera = new THREE.PerspectiveCamera();
     const geometry = new THREE.PlaneGeometry(1, 1);
-    const materials = projects.map(
+    const materials = renderProjects.map(
       () =>
         new THREE.MeshBasicMaterial({
           color: 0xffffff,
@@ -423,7 +465,7 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
           depthWrite: true,
         }),
     );
-    const meshes = projects.map((project, index) => {
+    const meshes = renderProjects.map((project, index) => {
       const mesh = new THREE.Mesh(geometry, materials[index]);
       mesh.visible = false;
       mesh.userData.projectIndex = index;
@@ -437,8 +479,8 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
     });
 
     const textureLoader = new THREE.TextureLoader();
-    const textureCache = new Map<number, THREE.Texture>();
-    const pendingTextures = new Map<number, number>();
+    const textureCache = new Map<string, THREE.Texture>();
+    const pendingTextures = new Map<string, number>();
     const raycaster = new THREE.Raycaster();
     const pointerNdc = new THREE.Vector2();
     const targetProgress = { value: 0 };
@@ -451,7 +493,7 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
     let mobile = window.innerWidth < MOBILE_BREAKPOINT;
     let viewportWidth = Math.max(1, window.innerWidth);
     let viewportHeight = Math.max(1, window.innerHeight);
-    let desiredTextureIndices = new Set<number>();
+    let desiredTextureKeys = new Set<string>();
     let desiredTextureKey = "";
     let textureRequestId = 0;
     let hoveredIndex: number | null = null;
@@ -460,6 +502,12 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
     let disposed = false;
     let animationFrame = 0;
     let visibleMeshes: THREE.Mesh[] = [];
+    let activePointerId: number | null = null;
+    let pointerDownX = 0;
+    let pointerDownY = 0;
+    let lastPointerX = 0;
+    let lastPointerY = 0;
+    let dragging = false;
 
     const clearHover = () => {
       hoveredIndex = null;
@@ -467,76 +515,91 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
       canvas.style.cursor = "";
     };
 
-    const applyTexture = (index: number, texture: THREE.Texture | null) => {
-      const material = materials[index];
-      material.map = texture;
-      material.needsUpdate = true;
+    const updateTextureCount = () => {
+      canvas.dataset.textureCount = String(textureCache.size);
     };
 
-    const disposeCachedTexture = (index: number) => {
-      const texture = textureCache.get(index);
+    const applyTexture = (
+      textureKey: string,
+      texture: THREE.Texture | null,
+    ) => {
+      renderProjects.forEach((project, index) => {
+        if (project.localPath !== textureKey) {
+          return;
+        }
+
+        const material = materials[index];
+        material.map = texture;
+        material.needsUpdate = true;
+      });
+    };
+
+    const disposeCachedTexture = (textureKey: string) => {
+      const texture = textureCache.get(textureKey);
 
       if (!texture) {
         return;
       }
 
-      applyTexture(index, null);
+      applyTexture(textureKey, null);
       texture.dispose();
-      textureCache.delete(index);
+      textureCache.delete(textureKey);
+      updateTextureCount();
     };
 
-    const requestTexture = async (index: number) => {
+    const requestTexture = async (textureKey: string) => {
       if (
         disposed ||
-        textureCache.has(index) ||
-        pendingTextures.has(index)
+        textureCache.has(textureKey) ||
+        pendingTextures.has(textureKey)
       ) {
         return;
       }
 
       const requestId = ++textureRequestId;
-      pendingTextures.set(index, requestId);
+      pendingTextures.set(textureKey, requestId);
 
       try {
-        const texture = await textureLoader.loadAsync(projects[index].localPath);
+        const texture = await textureLoader.loadAsync(textureKey);
         texture.colorSpace = THREE.SRGBColorSpace;
         texture.anisotropy = maxTextureAnisotropy;
 
-        if (pendingTextures.get(index) !== requestId) {
+        if (pendingTextures.get(textureKey) !== requestId) {
           texture.dispose();
           return;
         }
 
-        pendingTextures.delete(index);
+        pendingTextures.delete(textureKey);
 
-        if (disposed || !desiredTextureIndices.has(index)) {
+        if (disposed || !desiredTextureKeys.has(textureKey)) {
           texture.dispose();
           return;
         }
 
-        textureCache.set(index, texture);
-        applyTexture(index, texture);
+        textureCache.set(textureKey, texture);
+        applyTexture(textureKey, texture);
+        updateTextureCount();
 
         if (textureCache.size > MAX_TEXTURES) {
-          for (const staleIndex of textureCache.keys()) {
-            if (!desiredTextureIndices.has(staleIndex)) {
-              disposeCachedTexture(staleIndex);
+          for (const staleKey of textureCache.keys()) {
+            if (!desiredTextureKeys.has(staleKey)) {
+              disposeCachedTexture(staleKey);
               break;
             }
           }
         }
       } catch {
-        if (pendingTextures.get(index) === requestId) {
-          pendingTextures.delete(index);
+        if (pendingTextures.get(textureKey) === requestId) {
+          pendingTextures.delete(textureKey);
         }
       }
     };
 
     const syncTextureWindow = (progress: number) => {
-      const candidates = projects
+      const candidates = renderProjects
         .map((_, index) => ({
           index,
-          relativeSlot: wrappedRelativeSlot(index, progress, projects),
+          relativeSlot: wrappedRelativeSlot(index, progress, renderProjects),
         }))
         .filter(
           ({ relativeSlot }) =>
@@ -548,24 +611,30 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
             Math.abs(a.relativeSlot) - Math.abs(b.relativeSlot),
         )
         .slice(0, MAX_TEXTURES);
-      const nextIndices = candidates.map(({ index }) => index).sort((a, b) => a - b);
-      const nextKey = nextIndices.join(",");
+      const nextKeys = Array.from(
+        new Set(
+          candidates.map(({ index }) => renderProjects[index].localPath),
+        ),
+      )
+        .slice(0, MAX_TEXTURES)
+        .sort();
+      const nextKey = nextKeys.join(",");
 
       if (nextKey === desiredTextureKey) {
         return;
       }
 
       desiredTextureKey = nextKey;
-      desiredTextureIndices = new Set(nextIndices);
+      desiredTextureKeys = new Set(nextKeys);
 
-      for (const index of textureCache.keys()) {
-        if (!desiredTextureIndices.has(index)) {
-          disposeCachedTexture(index);
+      for (const textureKey of textureCache.keys()) {
+        if (!desiredTextureKeys.has(textureKey)) {
+          disposeCachedTexture(textureKey);
         }
       }
 
-      for (const index of desiredTextureIndices) {
-        void requestTexture(index);
+      for (const textureKey of desiredTextureKeys) {
+        void requestTexture(textureKey);
       }
     };
 
@@ -573,9 +642,12 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
       viewportWidth = Math.max(1, window.innerWidth);
       viewportHeight = Math.max(1, window.innerHeight);
       mobile = viewportWidth < MOBILE_BREAKPOINT;
+      canvas.dataset.sceneLayout = mobile ? "mobile" : "desktop";
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
       renderer.setSize(viewportWidth, viewportHeight, false);
       configureCamera(camera, viewportWidth, viewportHeight, mobile);
+      canvas.dataset.cameraDistance = String(cameraDistance(mobile));
+      canvas.dataset.cameraFov = camera.fov.toFixed(4);
     };
 
     const updateMeshes = () => {
@@ -585,11 +657,15 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
       syncTextureWindow(progress);
 
       meshes.forEach((mesh, index) => {
-        const relativeSlot = wrappedRelativeSlot(index, progress, projects);
+        const relativeSlot = wrappedRelativeSlot(
+          index,
+          progress,
+          renderProjects,
+        );
         const visible =
           relativeSlot > VISIBLE_SLOT_START &&
           relativeSlot < VISIBLE_SLOT_END &&
-          textureCache.has(index);
+          textureCache.has(renderProjects[index].localPath);
 
         if (!visible) {
           mesh.visible = false;
@@ -597,7 +673,7 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
         }
 
         const placement = placementAt(relativeSlot, mobile);
-        const project = projects[index];
+        const project = renderProjects[index];
         const world = worldPositionForPlacement(
           placement,
           project,
@@ -629,6 +705,7 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
       });
 
       visibleMeshes = nextVisibleMeshes;
+      canvas.dataset.sceneVisibleCount = String(visibleMeshes.length);
     };
 
     const raycastProject = () => {
@@ -659,7 +736,7 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
         return;
       }
 
-      hoverLabel.textContent = projects[hoveredIndex].title;
+      hoverLabel.textContent = renderProjects[hoveredIndex].title;
       hoverLabel.dataset.visible = "true";
       canvas.style.cursor = "pointer";
     };
@@ -710,6 +787,7 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
       updateMeshes();
       updateHover();
       applyHoverTransforms();
+      canvas.dataset.sceneProgress = currentProgress.value.toFixed(3);
 
       if (!contextLost) {
         renderer.render(scene, camera);
@@ -722,6 +800,7 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
       event.preventDefault();
       const delta = Math.max(-140, Math.min(140, event.deltaY));
       targetProgress.value += delta / 430;
+      interactionHint.dataset.hidden = "true";
     };
 
     const handlePointerMove = (event: PointerEvent) => {
@@ -737,6 +816,31 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
         "--label-translate-x",
         rightSide ? "-100%" : "0%",
       );
+
+      if (activePointerId !== event.pointerId) {
+        return;
+      }
+
+      const deltaX = event.clientX - lastPointerX;
+      const deltaY = event.clientY - lastPointerY;
+      const totalDistance = Math.hypot(
+        event.clientX - pointerDownX,
+        event.clientY - pointerDownY,
+      );
+
+      if (totalDistance > 7) {
+        dragging = true;
+      }
+
+      if (dragging) {
+        event.preventDefault();
+        const primaryDelta =
+          Math.abs(deltaY) >= Math.abs(deltaX) ? -deltaY : -deltaX;
+        targetProgress.value += primaryDelta / (mobile ? 145 : 240);
+      }
+
+      lastPointerX = event.clientX;
+      lastPointerY = event.clientY;
     };
 
     const handlePointerLeave = () => {
@@ -746,18 +850,93 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
       clearHover();
     };
 
-    const handleClick = (event: MouseEvent) => {
-      pointerNdc.set(
-        (event.clientX / viewportWidth) * 2 - 1,
-        -((event.clientY / viewportHeight) * 2 - 1),
-      );
-      const clickedIndex = raycastProject();
-
-      if (clickedIndex === null) {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!event.isPrimary) {
         return;
       }
 
-      window.location.assign(projects[clickedIndex].slug);
+      activePointerId = event.pointerId;
+      pointerDownX = event.clientX;
+      pointerDownY = event.clientY;
+      lastPointerX = event.clientX;
+      lastPointerY = event.clientY;
+      dragging = false;
+      interactionHint.dataset.hidden = "true";
+
+      if (event.pointerType !== "mouse") {
+        try {
+          canvas.setPointerCapture(event.pointerId);
+        } catch {
+          // Synthetic pointer events and older browsers can decline capture.
+        }
+      }
+    };
+
+    const releasePointer = (event: PointerEvent) => {
+      if (activePointerId !== event.pointerId) {
+        return;
+      }
+
+      activePointerId = null;
+      dragging = false;
+
+      try {
+        if (canvas.hasPointerCapture(event.pointerId)) {
+          canvas.releasePointerCapture(event.pointerId);
+        }
+      } catch {
+        // Pointer capture may already have been released by the browser.
+      }
+    };
+
+    const projectIndexAt = (clientX: number, clientY: number) => {
+      pointerNdc.set(
+        (clientX / viewportWidth) * 2 - 1,
+        -((clientY / viewportHeight) * 2 - 1),
+      );
+      return raycastProject() ?? (pointerInside ? hoveredIndex : null);
+    };
+
+    const selectMobileProject = (event: PointerEvent) => {
+      const selectedIndex = projectIndexAt(event.clientX, event.clientY);
+
+      if (selectedIndex === null) {
+        mobileCardLink.dataset.visible = "false";
+        mobileCardLink.removeAttribute("href");
+        return;
+      }
+
+      const project = renderProjects[selectedIndex];
+      mobileCardLink.href = project.slug;
+      mobileCardLink.textContent = `${project.title} \u2197`;
+      mobileCardLink.dataset.visible = "true";
+    };
+
+    const handlePointerUp = (event: PointerEvent) => {
+      if (activePointerId !== event.pointerId) {
+        return;
+      }
+
+      const wasDragging = dragging;
+      releasePointer(event);
+
+      if (mobile && !wasDragging) {
+        selectMobileProject(event);
+        return;
+      }
+
+      if (!mobile && !wasDragging) {
+        const selectedIndex = projectIndexAt(event.clientX, event.clientY);
+
+        if (selectedIndex !== null) {
+          window.location.assign(renderProjects[selectedIndex].slug);
+        }
+      }
+    };
+
+    const handlePointerCancel = (event: PointerEvent) => {
+      releasePointer(event);
+      clearHover();
     };
 
     const handleResize = () => {
@@ -773,19 +952,29 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
     const handleContextLost = (event: Event) => {
       event.preventDefault();
       contextLost = true;
+      canvas.dataset.contextState = "lost";
       clearHover();
     };
 
     const handleContextRestored = () => {
       contextLost = false;
       renderer.resetState();
+      for (const texture of textureCache.values()) {
+        texture.needsUpdate = true;
+      }
+      for (const material of materials) {
+        material.needsUpdate = true;
+      }
       resizeRenderer();
+      canvas.dataset.contextState = "restored";
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
-    canvas.addEventListener("pointermove", handlePointerMove, { passive: true });
+    canvas.addEventListener("pointerdown", handlePointerDown);
+    canvas.addEventListener("pointermove", handlePointerMove);
+    canvas.addEventListener("pointerup", handlePointerUp);
+    canvas.addEventListener("pointercancel", handlePointerCancel);
     canvas.addEventListener("pointerleave", handlePointerLeave);
-    canvas.addEventListener("click", handleClick);
     window.addEventListener("resize", handleResize, { passive: true });
     canvas.addEventListener("webglcontextlost", handleContextLost);
     canvas.addEventListener("webglcontextrestored", handleContextRestored);
@@ -793,21 +982,24 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
 
     resizeRenderer();
     syncTextureWindow(currentProgress.value);
+    canvas.dataset.contextState = "ready";
     animationFrame = window.requestAnimationFrame(animate);
 
     return () => {
       disposed = true;
       window.cancelAnimationFrame(animationFrame);
       window.removeEventListener("wheel", handleWheel);
+      canvas.removeEventListener("pointerdown", handlePointerDown);
       canvas.removeEventListener("pointermove", handlePointerMove);
+      canvas.removeEventListener("pointerup", handlePointerUp);
+      canvas.removeEventListener("pointercancel", handlePointerCancel);
       canvas.removeEventListener("pointerleave", handlePointerLeave);
-      canvas.removeEventListener("click", handleClick);
       window.removeEventListener("resize", handleResize);
       canvas.removeEventListener("webglcontextlost", handleContextLost);
       canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       reducedMotionQuery.removeEventListener("change", handleReducedMotionChange);
 
-      desiredTextureIndices.clear();
+      desiredTextureKeys.clear();
       pendingTextures.clear();
       for (const texture of textureCache.values()) {
         texture.dispose();
@@ -822,13 +1014,12 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
       }
       geometry.dispose();
       renderer.dispose();
-      renderer.forceContextLoss();
       clearHover();
     };
-  }, []);
+  }, [projects]);
 
   return (
-    <main className={styles.projectScene} aria-label="Selected projects">
+    <main className={styles.projectScene} aria-label={labels.selectedProjects}>
       <canvas
         ref={canvasRef}
         className={styles.sceneCanvas}
@@ -840,10 +1031,22 @@ export function ProjectScene({ projects }: { projects: ProjectTexture[] }) {
         data-visible="false"
         aria-hidden="true"
       />
-      <nav className={styles.srOnly} aria-label="Project links">
-        {projects.map((project) => (
+      <p
+        ref={interactionHintRef}
+        className={styles.interactionHint}
+        data-hidden="false"
+      >
+        {labels.explore}
+      </p>
+      <a
+        ref={mobileCardLinkRef}
+        className={styles.mobileCardLink}
+        data-visible="false"
+      />
+      <nav className={styles.projectLinks} aria-label={labels.projectLinks}>
+        {accessibleProjects.map((project) => (
           <a
-            key={project.id}
+            key={project.slug}
             href={project.slug}
           >
             {project.title}

@@ -2,13 +2,12 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 
 import type { ProjectTexture } from '@/types/project'
+import { getContentImageMetadata } from '@/content/readContentImage'
 
-type ContentSlug = 'projects' | 'posts' | 'novels' | 'photography'
+type ContentSlug = 'projects' | 'photography'
 
 const ROUTE_PREFIX: Record<ContentSlug, string> = {
   projects: '/projects',
-  posts: '/blog',
-  novels: '/novel',
   photography: '/photography',
 }
 
@@ -32,6 +31,14 @@ interface CollectionDoc {
   slug: string
   sortOrder?: number | null
   cover?: CoverMedia | null
+}
+
+interface PublishingDoc {
+  coverPath?: string | null
+  id: number | string
+  publishedAt?: string | null
+  slug: string
+  title: string
 }
 
 function toTexture(entry: RawEntry, index: number): ProjectTexture | null {
@@ -58,7 +65,7 @@ function toTexture(entry: RawEntry, index: number): ProjectTexture | null {
 export async function getManifest(): Promise<ProjectTexture[]> {
   const payload = await getPayload({ config })
 
-  const [projects, posts, novels, photography, resume] = await Promise.all([
+  const [projects, blogs, series, photography, resume] = await Promise.all([
     payload.find({
       collection: 'projects',
       depth: 1,
@@ -67,18 +74,37 @@ export async function getManifest(): Promise<ProjectTexture[]> {
       select: { title: true, slug: true, cover: true, sortOrder: true },
     }),
     payload.find({
-      collection: 'posts',
-      depth: 1,
+      collection: 'writings',
+      depth: 0,
       limit: 100,
-      sort: 'sortOrder',
-      select: { title: true, slug: true, cover: true, sortOrder: true },
+      overrideAccess: false,
+      sort: '-publishedAt',
+      where: {
+        and: [
+          { coverPath: { exists: true } },
+          { kind: { equals: 'blog' } },
+        ],
+      },
+      select: {
+        coverPath: true,
+        publishedAt: true,
+        slug: true,
+        title: true,
+      },
     }),
     payload.find({
-      collection: 'novels',
-      depth: 1,
+      collection: 'series',
+      depth: 0,
       limit: 100,
-      sort: 'sortOrder',
-      select: { title: true, slug: true, cover: true, sortOrder: true },
+      overrideAccess: false,
+      sort: '-publishedAt',
+      where: { coverPath: { exists: true } },
+      select: {
+        coverPath: true,
+        publishedAt: true,
+        slug: true,
+        title: true,
+      },
     }),
     payload.find({
       collection: 'photography',
@@ -109,9 +135,35 @@ export async function getManifest(): Promise<ProjectTexture[]> {
   }
 
   pushDocs('projects', projects.docs as CollectionDoc[])
-  pushDocs('posts', posts.docs as CollectionDoc[])
-  pushDocs('novels', novels.docs as CollectionDoc[])
   pushDocs('photography', photography.docs as CollectionDoc[])
+
+  const pushPublishingDocs = async (
+    prefix: '/blog' | '/novel',
+    docs: PublishingDoc[],
+    offset: number,
+  ) => {
+    for (const [index, doc] of docs.entries()) {
+      if (!doc.coverPath) continue
+      try {
+        const cover = await getContentImageMetadata(doc.coverPath)
+        raw.push({
+          cover,
+          id: `${prefix}-${doc.id}`,
+          route: `${prefix}/${doc.slug}`,
+          sortOrder: offset + index,
+          title: doc.title,
+        })
+      } catch {
+        // A missing cover must not break the homepage scene. The corresponding
+        // publishing page remains available and exposes the controlled 404.
+      }
+    }
+  }
+
+  await Promise.all([
+    pushPublishingDocs('/blog', blogs.docs as PublishingDoc[], 1000),
+    pushPublishingDocs('/novel', series.docs as PublishingDoc[], 2000),
+  ])
 
   if (resume) {
     const r = resume as {

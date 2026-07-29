@@ -46,11 +46,19 @@ describe('Payload Admin locale', () => {
       singular: { en: 'Project', zh: '项目' },
       plural: { en: 'Projects', zh: '项目' },
     })
-    expect(projects?.fields.find(({ name }) => name === 'title')?.label).toEqual({
+    const titleField = projects?.fields.find(
+      (field) => 'name' in field && field.name === 'title',
+    )
+    const technologiesField = projects?.fields.find(
+      (field) => 'name' in field && field.name === 'technologies',
+    )
+    expect(
+      titleField && 'label' in titleField ? titleField.label : undefined,
+    ).toEqual({
       en: 'Title',
       zh: '标题',
     })
-    expect(projects?.fields.find(({ name }) => name === 'technologies')).toMatchObject({
+    expect(technologiesField).toMatchObject({
       labels: {
         singular: { en: 'Technology', zh: '技术' },
         plural: { en: 'Technologies', zh: '技术' },

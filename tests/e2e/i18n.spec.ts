@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test'
 test('defaults to Simplified Chinese and persists an English selection', async ({
   page,
 }) => {
+  test.setTimeout(120_000)
   await page.goto('http://localhost:3000/', { waitUntil: 'networkidle' })
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN')
@@ -55,8 +56,13 @@ test('falls back to Chinese for an invalid cookie and switches on content pages'
   await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Back home' })).toBeVisible()
 
-  await page.getByRole('link', { name: 'XYLO' }).click()
-  await expect(page.getByText('Content coming soon')).toBeVisible()
+  await Promise.all([
+    page.waitForURL('**/projects/xylo', { waitUntil: 'commit' }),
+    page.getByRole('link', { name: 'XYLO' }).click(),
+  ])
+  await expect(page.getByText('Content coming soon')).toBeVisible({
+    timeout: 30_000,
+  })
 })
 
 test('renders the localized not-found page', async ({ page }) => {

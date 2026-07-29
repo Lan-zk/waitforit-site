@@ -1,0 +1,57 @@
+.navigation {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-block-start: clamp(56px, 9vw, 112px);
+  border-block-start: 1px solid rgb(255 255 255 / 22%);
+  padding-block-start: 24px;
+}
+
+.link {
+  display: grid;
+  gap: 8px;
+  border-radius: 4px;
+  padding: 12px;
+  transition:
+    color 180ms ease,
+    background 180ms ease;
+}
+
+.link:hover,
+.link:focus-visible {
+  background: rgb(255 255 255 / 8%);
+  color: #ddfa42;
+}
+
+.link:focus-visible {
+  outline: 2px solid #ddfa42;
+  outline-offset: 3px;
+}
+
+.next {
+  text-align: end;
+}
+
+.label {
+  color: rgb(255 255 255 / 50%);
+  font-family: "Mabry", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.title {
+  overflow-wrap: anywhere;
+  font-size: clamp(20px, 2.4vw, 32px);
+  line-height: 1.1;
+}
+
+@media (max-width: 600px) {
+  .navigation {
+    grid-template-columns: 1fr;
+  }
+
+  .next {
+    text-align: start;
+  }
+}

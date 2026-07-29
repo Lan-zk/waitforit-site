@@ -35,7 +35,10 @@ export default async function HomePage() {
 
   return (
     <>
-      <ProjectScene projects={manifest} />
+      <ProjectScene
+        labels={dictionary.scene}
+        projects={manifest}
+      />
       <GradientOverlays />
       <SiteHeader
         brandName={brandName}

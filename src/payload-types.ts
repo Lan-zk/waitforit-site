@@ -70,8 +70,8 @@ export interface Config {
     users: User;
     media: Media;
     projects: Project;
-    posts: Post;
-    novels: Novel;
+    writings: Writing;
+    series: Series;
     photography: Photography;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -83,8 +83,8 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
-    posts: PostsSelect<false> | PostsSelect<true>;
-    novels: NovelsSelect<false> | NovelsSelect<true>;
+    writings: WritingsSelect<false> | WritingsSelect<true>;
+    series: SeriesSelect<false> | SeriesSelect<true>;
     photography: PhotographySelect<false> | PhotographySelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -246,32 +246,43 @@ export interface Project {
   createdAt: string;
 }
 /**
+ * Read-only metadata synchronized from the publishing repository.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
+ * via the `definition` "writings".
  */
-export interface Post {
+export interface Writing {
   id: number;
   title: string;
   slug: string;
+  kind: 'blog' | 'novelChapter';
+  language: string;
   summary?: string | null;
-  cover: number | Media;
-  sortOrder?: number | null;
+  sourcePath: string;
+  series?: (number | null) | Series;
+  chapterOrder?: number | null;
+  coverPath?: string | null;
   publishedAt?: string | null;
+  syncedAt: string;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Read-only metadata synchronized from the publishing repository.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "novels".
+ * via the `definition` "series".
  */
-export interface Novel {
+export interface Series {
   id: number;
   title: string;
   slug: string;
+  language: string;
   summary?: string | null;
-  cover: number | Media;
-  sortOrder?: number | null;
+  sourcePath: string;
+  coverPath?: string | null;
   publishedAt?: string | null;
+  syncedAt: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -327,12 +338,12 @@ export interface PayloadLockedDocument {
         value: number | Project;
       } | null)
     | ({
-        relationTo: 'posts';
-        value: number | Post;
+        relationTo: 'writings';
+        value: number | Writing;
       } | null)
     | ({
-        relationTo: 'novels';
-        value: number | Novel;
+        relationTo: 'series';
+        value: number | Series;
       } | null)
     | ({
         relationTo: 'photography';
@@ -499,29 +510,36 @@ export interface ProjectsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts_select".
+ * via the `definition` "writings_select".
  */
-export interface PostsSelect<T extends boolean = true> {
+export interface WritingsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  kind?: T;
+  language?: T;
   summary?: T;
-  cover?: T;
-  sortOrder?: T;
+  sourcePath?: T;
+  series?: T;
+  chapterOrder?: T;
+  coverPath?: T;
   publishedAt?: T;
+  syncedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "novels_select".
+ * via the `definition` "series_select".
  */
-export interface NovelsSelect<T extends boolean = true> {
+export interface SeriesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  language?: T;
   summary?: T;
-  cover?: T;
-  sortOrder?: T;
+  sourcePath?: T;
+  coverPath?: T;
   publishedAt?: T;
+  syncedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

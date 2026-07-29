@@ -1,0 +1,379 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-29T07:09:55.172Z",
+  "title": "Design System: Wait For It",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Proofing Chartreuse",
+        "canonical": "#ddfa42",
+        "tonalRamp": [
+          "oklch(15% 0.198 118.4)",
+          "oklch(27% 0.198 118.4)",
+          "oklch(39% 0.198 118.4)",
+          "oklch(51% 0.198 118.4)",
+          "oklch(63% 0.198 118.4)",
+          "oklch(75% 0.198 118.4)",
+          "oklch(87% 0.198 118.4)",
+          "oklch(95% 0.198 118.4)"
+        ]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Press Black",
+        "canonical": "#000",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "neutral-ink": {
+        "role": "neutral",
+        "displayName": "Cold White",
+        "canonical": "#fff",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "neutral-body": {
+        "role": "neutral",
+        "displayName": "Reading White",
+        "canonical": "rgb(255 255 255 / 88%)",
+        "tonalRamp": [
+          "rgb(255 255 255 / 12%)",
+          "rgb(255 255 255 / 24%)",
+          "rgb(255 255 255 / 36%)",
+          "rgb(255 255 255 / 48%)",
+          "rgb(255 255 255 / 60%)",
+          "rgb(255 255 255 / 72%)",
+          "rgb(255 255 255 / 82%)",
+          "rgb(255 255 255 / 92%)"
+        ]
+      },
+      "neutral-muted": {
+        "role": "neutral",
+        "displayName": "Muted Editorial White",
+        "canonical": "rgb(255 255 255 / 64%)",
+        "tonalRamp": [
+          "rgb(255 255 255 / 8%)",
+          "rgb(255 255 255 / 16%)",
+          "rgb(255 255 255 / 24%)",
+          "rgb(255 255 255 / 32%)",
+          "rgb(255 255 255 / 40%)",
+          "rgb(255 255 255 / 48%)",
+          "rgb(255 255 255 / 56%)",
+          "rgb(255 255 255 / 64%)"
+        ]
+      },
+      "glass": {
+        "role": "neutral",
+        "displayName": "Night Glass",
+        "canonical": "rgb(255 255 255 / 10%)",
+        "tonalRamp": [
+          "rgb(255 255 255 / 4%)",
+          "rgb(255 255 255 / 6%)",
+          "rgb(255 255 255 / 8%)",
+          "rgb(255 255 255 / 10%)",
+          "rgb(255 255 255 / 14%)",
+          "rgb(255 255 255 / 18%)",
+          "rgb(255 255 255 / 24%)",
+          "rgb(255 255 255 / 32%)"
+        ]
+      },
+      "glass-strong": {
+        "role": "neutral",
+        "displayName": "Dense Night Glass",
+        "canonical": "rgb(255 255 255 / 14%)",
+        "tonalRamp": [
+          "rgb(255 255 255 / 4%)",
+          "rgb(255 255 255 / 7%)",
+          "rgb(255 255 255 / 10%)",
+          "rgb(255 255 255 / 14%)",
+          "rgb(255 255 255 / 18%)",
+          "rgb(255 255 255 / 24%)",
+          "rgb(255 255 255 / 32%)",
+          "rgb(255 255 255 / 42%)"
+        ]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "Hairline White",
+        "canonical": "rgb(255 255 255 / 22%)",
+        "tonalRamp": [
+          "rgb(255 255 255 / 4%)",
+          "rgb(255 255 255 / 8%)",
+          "rgb(255 255 255 / 12%)",
+          "rgb(255 255 255 / 16%)",
+          "rgb(255 255 255 / 22%)",
+          "rgb(255 255 255 / 32%)",
+          "rgb(255 255 255 / 48%)",
+          "rgb(255 255 255 / 72%)"
+        ]
+      },
+      "code-surface": {
+        "role": "neutral",
+        "displayName": "Code Black",
+        "canonical": "#101010",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(27% 0 0)",
+          "oklch(39% 0 0)",
+          "oklch(51% 0 0)",
+          "oklch(63% 0 0)",
+          "oklch(75% 0 0)",
+          "oklch(87% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "code-ink": {
+        "role": "primary",
+        "displayName": "Code Chartreuse",
+        "canonical": "#f4ffbc",
+        "tonalRamp": [
+          "oklch(15% 0.086 115.6)",
+          "oklch(27% 0.086 115.6)",
+          "oklch(39% 0.086 115.6)",
+          "oklch(51% 0.086 115.6)",
+          "oklch(63% 0.086 115.6)",
+          "oklch(75% 0.086 115.6)",
+          "oklch(87% 0.086 115.6)",
+          "oklch(95% 0.086 115.6)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Large public page titles and exhibition framing."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Publishing rows and chapter navigation titles."
+      },
+      "body": {
+        "displayName": "Reading Body",
+        "purpose": "Long-form Markdown, summaries, and explanatory copy."
+      },
+      "label": {
+        "displayName": "Interface Label",
+        "purpose": "Navigation capsules, the wordmark, and compact controls."
+      },
+      "metadata": {
+        "displayName": "Editorial Metadata",
+        "purpose": "Indexes, dates, and directional labels."
+      },
+      "code": {
+        "displayName": "Code",
+        "purpose": "Inline and preformatted technical content."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "hover-label-fade",
+        "value": "140ms ease",
+        "purpose": "Fast opacity response for the cursor-following project label."
+      },
+      {
+        "name": "row-response",
+        "value": "180ms ease",
+        "purpose": "Color and subtle background response in publishing and chapter navigation."
+      },
+      {
+        "name": "underline-draw",
+        "value": "250ms ease",
+        "purpose": "Footer email underline reveal."
+      },
+      {
+        "name": "capsule-shift",
+        "value": "350ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Navigation inversion, label swap, and brand-mark rotation."
+      },
+      {
+        "name": "editorial-ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Publishing-row inline movement."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "Effectively immediate transitions when reduced motion is requested."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "chapter-stack",
+        "value": "600px",
+        "purpose": "Stack previous and next chapter links."
+      },
+      {
+        "name": "public-mobile",
+        "value": "768px",
+        "purpose": "CSS changes at max-width 767px; the Three.js scene uses window width below 768px."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Brand Mark Home Control",
+      "kind": "custom",
+      "refersTo": "home-mark",
+      "description": "Circular night-glass home control with the radial Wait For It mark.",
+      "html": "<a class=\"ds-home-mark\" href=\"#\" aria-label=\"Home\"><svg aria-hidden=\"true\" viewBox=\"0 0 21 21\" fill=\"none\"><path d=\"M10.818 9.313 15.476 1.247l.55.318-4.659 8.069 8.071-4.658.318.55-8.064 4.656H21v.636h-9.31l8.062 4.656-.318.55-8.062-4.655 4.654 8.062-.55.318-4.658-8.067V21h-.636v-9.312l-4.656 8.064-.55-.318 4.653-8.062-8.061 4.655-.318-.551 8.063-4.657H0v-.636h9.31L1.248 5.527l.318-.55 8.061 4.654-4.654-8.06.55-.319 4.659 8.064V0h.636v9.313Z\" fill=\"currentColor\"/></svg></a>",
+      "css": ".ds-home-mark{display:grid;width:31.625px;height:32.5px;place-items:center;overflow:hidden;border-radius:50%;background:rgb(255 255 255 / 10%);color:#fff;transition:color 350ms cubic-bezier(.4,0,.2,1),background-color 350ms cubic-bezier(.4,0,.2,1)}.ds-home-mark svg{width:18.45px;height:18.45px;opacity:.7;transition:transform 350ms cubic-bezier(.4,0,.2,1)}.ds-home-mark:hover,.ds-home-mark:focus-visible{background:#ddfa42;color:#000}.ds-home-mark:hover svg,.ds-home-mark:focus-visible svg{transform:rotate(45deg)}@media(prefers-reduced-motion:reduce){.ds-home-mark,.ds-home-mark svg{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Navigation Pill",
+      "kind": "nav",
+      "refersTo": "nav-pill",
+      "description": "Translucent capsule with a vertical duplicate-label swap on interaction.",
+      "html": "<a class=\"ds-nav-pill\" href=\"#\"><span class=\"ds-nav-track\"><span>Journal</span><span aria-hidden=\"true\">Journal</span></span></a>",
+      "css": ".ds-nav-pill{position:relative;display:inline-block;overflow:hidden;padding:9.22817px 15.8197px 8.78873px;border-radius:87.8873px;background:rgb(255 255 255 / 10%);color:#fff;font-family:\"FK Display\",sans-serif;font-size:14.062px;line-height:15.4682px;text-decoration:none;transition:color 350ms cubic-bezier(.4,0,.2,1),background-color 350ms cubic-bezier(.4,0,.2,1)}.ds-nav-track{position:relative;display:block;height:15.4682px;overflow:hidden}.ds-nav-track>span{display:block;height:15.4682px;white-space:nowrap;transition:transform 350ms cubic-bezier(.4,0,.2,1)}.ds-nav-track>span:nth-child(2){position:absolute;top:100%;left:0}.ds-nav-pill:hover,.ds-nav-pill:focus-visible{background:#ddfa42;color:#000}.ds-nav-pill:hover .ds-nav-track>span,.ds-nav-pill:focus-visible .ds-nav-track>span{transform:translateY(-100%)}@media(prefers-reduced-motion:reduce){.ds-nav-pill,.ds-nav-track>span{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Language Switcher",
+      "kind": "nav",
+      "refersTo": "language-capsule",
+      "description": "Compact bilingual selector with a muted inactive state and explicit selected state.",
+      "html": "<div class=\"ds-language\" aria-label=\"Choose language\"><button class=\"ds-language-active\" aria-pressed=\"true\">中</button><span aria-hidden=\"true\">/</span><button aria-pressed=\"false\">EN</button></div>",
+      "css": ".ds-language{display:inline-flex;min-width:76px;height:32.5px;align-items:center;justify-content:center;gap:5px;padding:0 10px;border-radius:87.8873px;background:rgb(255 255 255 / 10%);color:rgb(255 255 255 / 55%);font-family:\"FK Display\",sans-serif;font-size:12px;line-height:1}.ds-language button{border:0;padding:5px 2px;background:transparent;color:inherit;cursor:pointer;font:inherit;transition:color 200ms ease}.ds-language button:hover,.ds-language button:focus-visible,.ds-language .ds-language-active{color:#fff}.ds-language button:focus-visible{border-radius:3px;outline:2px solid #ddfa42;outline-offset:2px}@media(prefers-reduced-motion:reduce){.ds-language button{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Content Back Pill",
+      "kind": "nav",
+      "refersTo": "back-pill",
+      "description": "Short fixed-page return control sharing the primary capsule inversion.",
+      "html": "<a class=\"ds-back-pill\" href=\"#\">Back to journal</a>",
+      "css": ".ds-back-pill{display:inline-flex;min-height:32px;align-items:center;border-radius:999px;padding:8px 14px;background:rgb(255 255 255 / 10%);color:#fff;font-family:\"FK Display\",sans-serif;font-size:14px;line-height:1;text-decoration:none}.ds-back-pill:hover,.ds-back-pill:focus-visible{background:#ddfa42;color:#000}.ds-back-pill:focus-visible{outline:2px solid #ddfa42;outline-offset:3px}"
+    },
+    {
+      "name": "Publishing Row",
+      "kind": "custom",
+      "refersTo": "publishing-row",
+      "description": "Hairline-separated editorial index row with index, copy, date, and direction.",
+      "html": "<a class=\"ds-publishing-row\" href=\"#\"><span class=\"ds-publishing-meta\">01</span><span class=\"ds-publishing-copy\"><span class=\"ds-publishing-title\">A long-form publishing title</span><span class=\"ds-publishing-summary\">A concise summary that supports the title without becoming a card.</span></span><span class=\"ds-publishing-meta\">29 JUL 2026</span><span aria-hidden=\"true\">↗</span></a>",
+      "css": ".ds-publishing-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto 28px;gap:clamp(12px,2vw,28px);align-items:start;border-block:1px solid rgb(255 255 255 / 22%);padding-block:clamp(22px,3.2vw,38px);color:#fff;text-decoration:none;transition:color 180ms ease,padding-inline 260ms cubic-bezier(.16,1,.3,1)}.ds-publishing-row:hover{padding-inline:12px;color:#ddfa42}.ds-publishing-row:focus-visible{outline:2px solid #ddfa42;outline-offset:4px}.ds-publishing-copy{display:grid;gap:8px}.ds-publishing-title{font-family:\"FK Display\",sans-serif;font-size:clamp(26px,3.5vw,48px);line-height:1}.ds-publishing-summary{max-width:60ch;color:rgb(255 255 255 / 60%);font-family:Mabry,sans-serif;font-size:clamp(14px,1.2vw,17px);line-height:1.5}.ds-publishing-meta{color:rgb(255 255 255 / 48%);font-family:Mabry,sans-serif;font-size:13px;letter-spacing:.06em;line-height:1.5;text-transform:uppercase}@media(max-width:767px){.ds-publishing-row{grid-template-columns:28px minmax(0,1fr) 20px}.ds-publishing-row>.ds-publishing-meta:nth-of-type(2){display:none}}"
+    },
+    {
+      "name": "Article Link",
+      "kind": "custom",
+      "refersTo": "article-link",
+      "description": "Proofing-chartreuse inline link with editorial underline and explicit focus.",
+      "html": "<a class=\"ds-article-link\" href=\"#\">Read the source note</a>",
+      "css": ".ds-article-link{border-radius:2px;color:#ddfa42;font-family:Mabry,sans-serif;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}.ds-article-link:hover{color:#fff}.ds-article-link:focus-visible{outline:2px solid #ddfa42;outline-offset:4px}"
+    },
+    {
+      "name": "Code Block",
+      "kind": "custom",
+      "refersTo": "code-block",
+      "description": "Tonal black technical surface with a hairline edge and no shadow.",
+      "html": "<pre class=\"ds-code-block\"><code>type Publication = { title: string }</code></pre>",
+      "css": ".ds-code-block{max-width:100%;overflow-x:auto;border:1px solid rgb(255 255 255 / 16%);border-radius:12px;padding:clamp(16px,3vw,28px);background:#101010;color:#fff;font-family:\"SFMono-Regular\",Consolas,\"Liberation Mono\",monospace;font-size:.88em;line-height:1.75;white-space:pre}@media(max-width:767px){.ds-code-block{margin-inline:-8px;border-radius:8px;padding:16px}}"
+    },
+    {
+      "name": "Editorial Blockquote",
+      "kind": "custom",
+      "refersTo": "article-quote",
+      "description": "Muted reading text marked by a single chartreuse inline rule.",
+      "html": "<blockquote class=\"ds-article-quote\">Git keeps the source; the site keeps the reading experience.</blockquote>",
+      "css": ".ds-article-quote{margin-inline:0;border:0;border-inline-start:3px solid #ddfa42;padding:.2em 0 .2em 1.15em;color:rgb(255 255 255 / 66%);font-family:Mabry,sans-serif;font-size:clamp(16px,1.15vw,19px);line-height:1.75}"
+    },
+    {
+      "name": "Chapter Navigation Link",
+      "kind": "nav",
+      "refersTo": "chapter-link",
+      "description": "Quiet directional reading control that reveals a tonal fill and accent on interaction.",
+      "html": "<a class=\"ds-chapter-link\" href=\"#\"><span class=\"ds-chapter-label\">NEXT →</span><span class=\"ds-chapter-title\">The following chapter</span></a>",
+      "css": ".ds-chapter-link{display:grid;gap:8px;border-radius:4px;padding:12px;color:#fff;text-decoration:none;transition:color 180ms ease,background 180ms ease}.ds-chapter-link:hover,.ds-chapter-link:focus-visible{background:rgb(255 255 255 / 8%);color:#ddfa42}.ds-chapter-link:focus-visible{outline:2px solid #ddfa42;outline-offset:3px}.ds-chapter-label{color:rgb(255 255 255 / 50%);font-family:Mabry,sans-serif;font-size:13px;letter-spacing:.04em;text-transform:uppercase}.ds-chapter-title{font-family:\"FK Display\",sans-serif;font-size:clamp(20px,2.4vw,32px);line-height:1.1}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The After-Hours Editorial Gallery",
+    "overview": "The system combines the immersion of a black-box exhibition with the discipline of an editorial desk. A press-black frame and cold-white typography stay quiet enough for WebGL imagery and long-form writing to lead. Proofing chartreuse enters like an editor's mark: rare, precise, and tied to action or annotation.\n\nSurfaces are flat and calm. Depth comes from spatial composition, tonal transparency, fine dividers, gradient veils, and the WebGL scene rather than decorative shadow. The interface is restrained, immersive, cool, and editorial; static controls recede, while hover and focus make intent unambiguous.",
+    "keyCharacteristics": [
+      "A press-black stage with cold-white type.",
+      "One proofing-chartreuse signal for links, focus, hover, and annotation.",
+      "FK Display frames the experience; Mabry carries sustained reading.",
+      "Flat translucent capsules and hairline dividers replace conventional panels.",
+      "Fixed spatial chrome surrounds a deliberately scrollable publishing surface."
+    ],
+    "rules": [
+      {
+        "name": "The Proofreader's Mark Rule",
+        "body": "Chartreuse marks interaction or editorial emphasis; it never becomes a large decorative page field.",
+        "section": "colors"
+      },
+      {
+        "name": "The Black Stage Rule",
+        "body": "New public surfaces begin from the press-black stage; lighter tonal surfaces must be local, functional, and subordinate.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Face Type Rule",
+        "body": "FK Display frames and navigates; Mabry explains and sustains reading. Do not swap their jobs without a clear content reason.",
+        "section": "typography"
+      },
+      {
+        "name": "The Regular-Weight Rule",
+        "body": "Scale, spacing, opacity, and family establish hierarchy before bold weight; weight 500 is reserved for limited emphasis such as table headers.",
+        "section": "typography"
+      },
+      {
+        "name": "The Fixed Stage Rule",
+        "body": "Site chrome and the WebGL world stay spatially fixed; reading surfaces provide the scroll.",
+        "section": "layout"
+      },
+      {
+        "name": "The Ruled List Rule",
+        "body": "Repeated publishing content uses hairline-separated rows with generous vertical rhythm, never a generic grid of raised cards.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat-by-Default Rule",
+        "body": "Do not add shadows to imply hierarchy; use spatial placement, tonal contrast, transparency, or a divider first.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Local Blur Rule",
+        "body": "Blur belongs only to small overlays that must remain legible over moving imagery, not to broad page panels.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Rounded Controls, Square Content Rule",
+        "body": "Capsules indicate compact interaction; editorial content does not sit inside rounded cards.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** keep public surfaces grounded in Press Black and Cold White.",
+      "**Do** reserve Proofing Chartreuse for interaction, focus, and editorial annotation.",
+      "**Do** use FK Display for framing and Mabry for sustained reading.",
+      "**Do** create hierarchy with scale, spacing, opacity, dividers, and spatial composition before adding containers.",
+      "**Do** make keyboard focus at least as explicit as hover.",
+      "**Do** preserve the `767px` CSS and `768px` WebGL responsive contract.",
+      "**Do** honor reduced-motion behavior whenever interaction is animated."
+    ],
+    "donts": [
+      "**Don't** make the site resemble a SaaS dashboard.",
+      "**Don't** introduce bright playful palettes or many competing card colors.",
+      "**Don't** wrap editorial lists or reading content in generic raised cards.",
+      "**Don't** add decorative shadows, broad frosted-glass panels, or ambient glow.",
+      "**Don't** use chartreuse as a large background except on compact active controls.",
+      "**Don't** replace the fixed WebGL stage with conventional dashboard or content grid composition."
+    ]
+  }
+}

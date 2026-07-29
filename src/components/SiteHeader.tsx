@@ -162,7 +162,7 @@ export function SiteHeader({
 
   return (
     <header className={styles.siteHeader}>
-      <div className={styles.desktopHeader}>
+      <div className={styles.desktopHeader} data-header-layout="desktop">
         <div className={styles.leftGroup}>
           <HomeLink label={labels.home} />
           <nav aria-label={labels.navigation} className={styles.navigation}>
@@ -189,10 +189,18 @@ export function SiteHeader({
         </div>
       </div>
 
-      <div className={styles.mobileHeader}>
+      <div className={styles.mobileHeader} data-header-layout="mobile">
         <time className={styles.mobileTime}>{time || '\u00a0'}</time>
         <HomeLink label={labels.home} mobile />
         <LanguageSwitcher labels={labels.language} locale={locale} mobile />
+        <nav
+          aria-label={labels.navigation}
+          className={styles.mobileNavigation}
+        >
+          {nav.map((item) => (
+            <PillLink key={item.href} {...item} />
+          ))}
+        </nav>
       </div>
     </header>
   )

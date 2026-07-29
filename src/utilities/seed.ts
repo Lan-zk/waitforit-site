@@ -8,7 +8,7 @@ import { getPayload } from 'payload'
 import config from '../payload.config'
 
 interface SeedItem {
-  collection: 'projects' | 'posts' | 'novels' | 'photography'
+  collection: 'projects' | 'photography'
   title: string
   slug: string
   image: string
@@ -31,27 +31,11 @@ const SEED_ITEMS: SeedItem[] = [
     summary: 'A spatial brand system.',
   },
   {
-    collection: 'posts',
-    title: 'First Post',
-    slug: 'first-post',
-    image: '00-better-angels-ventures-c03f0b97.webp',
-    sortOrder: 1,
-    summary: 'The opening note.',
-  },
-  {
-    collection: 'novels',
-    title: 'The Lodge',
-    slug: 'the-lodge',
-    image: '01-the-lodge-87185b95.webp',
-    sortOrder: 2,
-    summary: 'A short story.',
-  },
-  {
     collection: 'photography',
     title: 'Divino',
     slug: 'divino',
     image: '02-divino-harrogate-d1c805f1.webp',
-    sortOrder: 3,
+    sortOrder: 1,
     summary: 'A street frame.',
   },
 ]

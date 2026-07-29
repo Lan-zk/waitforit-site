@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 import { ContentPage } from '@/components/ContentPage'
+import { PublishingList } from '@/components/PublishingList'
 import { getI18n } from '@/i18n/server'
 import config from '@/payload.config'
 
@@ -30,13 +31,12 @@ export default async function ProjectsList() {
       {docs.length === 0 ? (
         <p>{dictionary.pages.empty}</p>
       ) : (
-        <ul>
-          {docs.map((doc) => (
-            <li key={doc.id}>
-              <a href={`/projects/${doc.slug}`}>{doc.title}</a>
-            </li>
-          ))}
-        </ul>
+        <PublishingList
+          items={docs.map((doc) => ({
+            href: `/projects/${doc.slug}`,
+            title: doc.title,
+          }))}
+        />
       )}
     </ContentPage>
   )

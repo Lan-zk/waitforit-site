@@ -8,7 +8,9 @@ import styles from './ContentPage.module.css'
 import { LanguageSwitcher } from './SiteHeader'
 
 interface ContentPageProps {
+  backHref?: string
   children: ReactNode
+  description?: string
   homeLabel: string
   languageLabels: Dictionary['language']
   locale: Locale
@@ -16,7 +18,9 @@ interface ContentPageProps {
 }
 
 export function ContentPage({
+  backHref = '/',
   children,
+  description,
   homeLabel,
   languageLabels,
   locale,
@@ -24,11 +28,14 @@ export function ContentPage({
 }: ContentPageProps) {
   return (
     <main className={styles.page}>
-      <Link className={styles.homeLink} href="/">
+      <Link className={styles.homeLink} href={backHref}>
         {homeLabel}
       </Link>
       <LanguageSwitcher labels={languageLabels} locale={locale} standalone />
-      <h1 className={styles.title}>{title}</h1>
+      <header className={styles.pageHeader}>
+        <h1 className={styles.title}>{title}</h1>
+        {description ? <p className={styles.description}>{description}</p> : null}
+      </header>
       <div className={styles.content}>{children}</div>
     </main>
   )

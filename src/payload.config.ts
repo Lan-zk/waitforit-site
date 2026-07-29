@@ -10,9 +10,9 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Projects } from './collections/Projects'
-import { Posts } from './collections/Posts'
-import { Novels } from './collections/Novels'
 import { Photography } from './collections/Photography'
+import { Series } from './collections/Series'
+import { Writings } from './collections/Writings'
 
 import { Resume } from './globals/Resume'
 import { SiteSettings } from './globals/SiteSettings'
@@ -29,7 +29,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Projects, Posts, Novels, Photography],
+  collections: [Users, Media, Projects, Writings, Series, Photography],
   globals: [Resume, SiteSettings, Header, Footer],
   i18n: {
     fallbackLanguage: 'zh',
@@ -43,6 +43,9 @@ export default buildConfig({
   db: sqliteAdapter({
     client: {
       url: process.env.DATABASE_URL || '',
+    },
+    transactionOptions: {
+      behavior: 'immediate',
     },
   }),
   sharp,
