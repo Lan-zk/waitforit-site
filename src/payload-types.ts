@@ -606,6 +606,101 @@ export interface Resume {
   title?: string | null;
   cover?: (number | null) | Media;
   sortOrder?: number | null;
+  /**
+   * Public identity only. Do not enter private contact, employer, school, training provider, marital status, or client names.
+   */
+  positioning?: {
+    displayName?: string | null;
+    headline?: string | null;
+    summary?: string | null;
+    experienceYears?: number | null;
+  };
+  coreCapabilities?:
+    | {
+        title: string;
+        tags?:
+          | {
+              name: string;
+              id?: string | null;
+            }[]
+          | null;
+        summary?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Use anonymous project descriptions and years only. Do not include employer, hospital, customer, or institution names.
+   */
+  professionalProjects?:
+    | {
+        title: string;
+        domain?: string | null;
+        startYear?: number | null;
+        endYear?: number | null;
+        role?: string | null;
+        technologies?:
+          | {
+              name: string;
+              id?: string | null;
+            }[]
+          | null;
+        challenge?: string | null;
+        decision?: string | null;
+        contributions?:
+          | {
+              description: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  publicProducts?: (number | Project)[] | null;
+  governanceCases?:
+    | {
+        title: string;
+        year?: number | null;
+        summary?: string | null;
+        responsibilities?:
+          | {
+              description: string;
+              id?: string | null;
+            }[]
+          | null;
+        focusAreas?:
+          | {
+              name: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  skillGroups?:
+    | {
+        title: string;
+        skills?:
+          | {
+              name: string;
+              id?: string | null;
+            }[]
+          | null;
+        scenarios?:
+          | {
+              name: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  currentFocus?:
+    | {
+        name: string;
+        status?: ('active' | 'exploring') | null;
+        id?: string | null;
+      }[]
+    | null;
   content?: {
     root: {
       type: string;
@@ -686,6 +781,97 @@ export interface ResumeSelect<T extends boolean = true> {
   title?: T;
   cover?: T;
   sortOrder?: T;
+  positioning?:
+    | T
+    | {
+        displayName?: T;
+        headline?: T;
+        summary?: T;
+        experienceYears?: T;
+      };
+  coreCapabilities?:
+    | T
+    | {
+        title?: T;
+        tags?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+        summary?: T;
+        id?: T;
+      };
+  professionalProjects?:
+    | T
+    | {
+        title?: T;
+        domain?: T;
+        startYear?: T;
+        endYear?: T;
+        role?: T;
+        technologies?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+        challenge?: T;
+        decision?: T;
+        contributions?:
+          | T
+          | {
+              description?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  publicProducts?: T;
+  governanceCases?:
+    | T
+    | {
+        title?: T;
+        year?: T;
+        summary?: T;
+        responsibilities?:
+          | T
+          | {
+              description?: T;
+              id?: T;
+            };
+        focusAreas?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  skillGroups?:
+    | T
+    | {
+        title?: T;
+        skills?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+        scenarios?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  currentFocus?:
+    | T
+    | {
+        name?: T;
+        status?: T;
+        id?: T;
+      };
   content?: T;
   updatedAt?: T;
   createdAt?: T;

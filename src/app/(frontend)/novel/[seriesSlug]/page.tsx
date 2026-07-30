@@ -28,7 +28,7 @@ export default async function NovelDetail({
   })
   const doc = docs[0]
   if (!doc) notFound()
-  const [{ dictionary, locale }, chapters] = await Promise.all([
+  const [{ dictionary }, chapters] = await Promise.all([
     getI18n(),
     payload.find({
       collection: 'writings',
@@ -62,8 +62,6 @@ export default async function NovelDetail({
     <ContentPage
       backHref="/novel"
       homeLabel={dictionary.pages.backNovel}
-      languageLabels={dictionary.language}
-      locale={locale}
       title={doc.title}
       description={doc.summary ?? undefined}
     >

@@ -1,0 +1,437 @@
+.resume {
+  border-block-start: 1px solid var(--line);
+  border-inline-start: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.section,
+.capabilities,
+.governanceAndSkills {
+  border-block-end: 1px solid var(--line);
+  border-inline-end: 1px solid var(--line);
+}
+
+.section {
+  padding: clamp(28px, 5vw, 64px);
+}
+
+.sectionLabel {
+  margin: 0 0 28px;
+  color: var(--focus-blue);
+  font-family: "Mabry Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.identity {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
+  padding: 0;
+}
+
+.identityCopy {
+  padding: clamp(28px, 5vw, 64px);
+  border-inline-end: 1px solid var(--line);
+}
+
+.displayName {
+  margin: 0;
+  font-size: clamp(48px, 9vw, 104px);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+}
+
+.headline {
+  margin: 24px 0 0;
+  color: var(--ink-secondary);
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.25;
+}
+
+.positioningSummary {
+  max-width: 64ch;
+  margin: 32px 0 0;
+  border-inline-start: 4px solid var(--klein-blue);
+  padding-inline-start: 18px;
+  color: var(--ink-secondary);
+  line-height: 1.7;
+}
+
+.experience {
+  display: flex;
+  min-height: 240px;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(28px, 5vw, 64px);
+  background: var(--surface-deep);
+  color: var(--ink-muted);
+  font-family: "Mabry Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.experience strong {
+  margin-block: 12px;
+  color: var(--ink);
+  font-family: "Mabry", "PingFang SC", sans-serif;
+  font-size: clamp(64px, 9vw, 112px);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.8;
+}
+
+.capabilities {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.capability {
+  min-width: 0;
+  padding: clamp(24px, 3.5vw, 44px);
+  border-inline-end: 1px solid var(--line);
+}
+
+.capability:last-child {
+  border-inline-end: 0;
+}
+
+.capability h2,
+.case h2,
+.governanceCard h2,
+.skillGrid h2,
+.contact h2 {
+  margin: 0;
+  font-size: clamp(22px, 2.5vw, 32px);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.capability > p:last-child {
+  color: var(--ink-secondary);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 18px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  border: 1px solid var(--line-strong);
+  padding: 4px 7px;
+  color: var(--ink-secondary);
+  font-family: "Mabry Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 11px;
+}
+
+.caseList {
+  display: grid;
+  gap: clamp(36px, 6vw, 72px);
+}
+
+.case {
+  display: grid;
+  grid-template-columns: 60px minmax(220px, 0.8fr) minmax(0, 1.5fr);
+  gap: clamp(20px, 3vw, 40px);
+}
+
+.case + .case {
+  border-block-start: 1px solid var(--line);
+  padding-block-start: clamp(36px, 6vw, 72px);
+}
+
+.caseIndex {
+  color: var(--line-strong);
+  font-size: 42px;
+  line-height: 1;
+}
+
+.caseHeader > p {
+  margin: 10px 0;
+  color: var(--focus-blue);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.caseMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  color: var(--ink-muted);
+  font-family: "Mabry Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 11px;
+}
+
+.caseBody {
+  display: grid;
+  gap: 24px;
+  border-inline-start: 1px solid var(--line);
+  padding-inline-start: clamp(20px, 3vw, 40px);
+}
+
+.caseBody h3 {
+  margin: 0 0 6px;
+  color: var(--ink-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.caseBody p {
+  margin: 0;
+  color: var(--ink-secondary);
+}
+
+.contributions {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contributions li {
+  position: relative;
+  padding-inline-start: 18px;
+  color: var(--ink-secondary);
+}
+
+.contributions li::before {
+  position: absolute;
+  inset-inline-start: 0;
+  color: var(--focus-blue);
+  content: "/";
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-block-start: 1px solid var(--line);
+  border-inline-start: 1px solid var(--line);
+}
+
+.product {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  border-block-end: 1px solid var(--line);
+  border-inline-end: 1px solid var(--line);
+  background: var(--surface-deep);
+  color: var(--ink) !important;
+  text-decoration: none !important;
+}
+
+.product img {
+  display: block;
+  width: 100%;
+  height: 190px;
+  grid-column: 1 / -1;
+  object-fit: cover;
+  filter: saturate(0.55);
+}
+
+.product:hover img {
+  filter: none;
+}
+
+.productCopy {
+  display: grid;
+  gap: 6px;
+  padding: 0 0 22px 22px;
+}
+
+.productCopy span {
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.product > span:last-child {
+  padding: 0 22px 22px 0;
+  color: var(--focus-blue);
+}
+
+.product:focus-visible {
+  outline: 2px solid var(--focus-blue);
+  outline-offset: -3px;
+}
+
+.governanceAndSkills {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.governance,
+.skillGraph {
+  padding: clamp(28px, 5vw, 64px);
+}
+
+.governance {
+  border-inline-end: 1px solid var(--line);
+}
+
+.governanceCard {
+  padding: 22px;
+  background: var(--klein-blue);
+}
+
+.governanceCard + .governanceCard {
+  margin-block-start: 16px;
+}
+
+.governanceCard p,
+.governanceCard li {
+  color: rgb(255 255 255 / 86%);
+}
+
+.governanceCard .tags li {
+  border-color: rgb(255 255 255 / 36%);
+}
+
+.skillGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.skillGrid h2 {
+  color: var(--ink-muted);
+  font-family: "Mabry Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.skillGrid p {
+  margin: 10px 0;
+  color: var(--ink-secondary);
+}
+
+.skillGrid small {
+  color: var(--ink-muted);
+}
+
+.focus {
+  background: var(--surface-deep);
+}
+
+.focus ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 38px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.focus li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(19px, 2vw, 26px);
+}
+
+.focus li::before {
+  width: 9px;
+  height: 9px;
+  background: var(--klein-blue);
+  content: "";
+}
+
+.focus small {
+  border: 1px solid var(--focus-blue);
+  padding: 2px 5px;
+  color: var(--focus-blue);
+  font-family: "Mabry Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 9px;
+}
+
+.supplement {
+  max-width: 780px;
+}
+
+.contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.contact a {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  padding: 12px 24px;
+  background: var(--klein-blue);
+  color: var(--ink) !important;
+  text-decoration: none !important;
+}
+
+.contact a:focus-visible {
+  outline: 2px solid var(--focus-blue);
+  outline-offset: 3px;
+}
+
+@media (width < 900px) {
+  .capabilities,
+  .products {
+    grid-template-columns: 1fr;
+  }
+
+  .capability {
+    border-block-end: 1px solid var(--line);
+    border-inline-end: 0;
+  }
+
+  .capability:last-child {
+    border-block-end: 0;
+  }
+
+  .case {
+    grid-template-columns: 42px 1fr;
+  }
+
+  .caseBody {
+    grid-column: 2;
+  }
+}
+
+@media (width < 720px) {
+  .identity,
+  .governanceAndSkills {
+    grid-template-columns: 1fr;
+  }
+
+  .identityCopy,
+  .governance {
+    border-block-end: 1px solid var(--line);
+    border-inline-end: 0;
+  }
+
+  .case {
+    grid-template-columns: 1fr;
+  }
+
+  .caseIndex {
+    display: none;
+  }
+
+  .caseBody {
+    grid-column: auto;
+    border-inline-start: 0;
+    padding-inline-start: 0;
+  }
+
+  .skillGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

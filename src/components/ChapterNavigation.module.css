@@ -20,11 +20,11 @@
 .link:hover,
 .link:focus-visible {
   background: rgb(255 255 255 / 8%);
-  color: #ddfa42;
+  color: var(--focus-blue);
 }
 
 .link:focus-visible {
-  outline: 2px solid #ddfa42;
+  outline: 2px solid var(--focus-blue);
   outline-offset: 3px;
 }
 

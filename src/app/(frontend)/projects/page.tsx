@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function ProjectsList() {
   const payload = await getPayload({ config })
-  const [{ docs }, { dictionary, locale }] = await Promise.all([
+  const [{ docs }, { dictionary }] = await Promise.all([
     payload.find({
       collection: 'projects',
       depth: 0,
@@ -24,8 +24,6 @@ export default async function ProjectsList() {
   return (
     <ContentPage
       homeLabel={dictionary.pages.backHome}
-      languageLabels={dictionary.language}
-      locale={locale}
       title={dictionary.pages.projects}
     >
       {docs.length === 0 ? (

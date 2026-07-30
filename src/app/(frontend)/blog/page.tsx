@@ -31,8 +31,6 @@ export default async function BlogList() {
   return (
     <ContentPage
       homeLabel={dictionary.pages.backHome}
-      languageLabels={dictionary.language}
-      locale={locale}
       title={dictionary.pages.blog}
       description={dictionary.pages.blogIntro}
     >

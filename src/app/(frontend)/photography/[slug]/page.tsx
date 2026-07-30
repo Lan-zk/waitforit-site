@@ -23,13 +23,11 @@ export default async function PhotoDetail({
   })
   const doc = docs[0]
   if (!doc) notFound()
-  const { dictionary, locale } = await getI18n()
+  const { dictionary } = await getI18n()
 
   return (
     <ContentPage
       homeLabel={dictionary.pages.backHome}
-      languageLabels={dictionary.language}
-      locale={locale}
       title={doc.title}
     >
       <p>{dictionary.pages.shell}</p>

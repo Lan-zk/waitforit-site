@@ -12,9 +12,27 @@
 }
 
 /* Hidden while the homepage intro plays; revealed once the gallery settles. */
-:root[data-site-intro="scene"] .siteHeader {
+:root[data-site-intro="scene"] .sceneHeader {
   visibility: hidden;
   opacity: 0;
+}
+
+.documentHeader {
+  padding-block: 8px;
+}
+
+.documentHeader::before {
+  position: absolute;
+  z-index: -1;
+  inset: -36px 0 -12px;
+  background: linear-gradient(
+    180deg,
+    rgb(14 14 14 / 96%) 0%,
+    rgb(14 14 14 / 72%) 72%,
+    transparent 100%
+  );
+  content: "";
+  pointer-events: none;
 }
 
 .desktopHeader {
@@ -60,8 +78,8 @@
 
 .homeLink:hover,
 .homeLink:focus-visible {
-  color: #000;
-  background: #ddfa42;
+  color: var(--ink);
+  background: var(--klein-blue);
 }
 
 .homeLink:hover .brandMark,
@@ -115,8 +133,8 @@
 
 .pill:hover,
 .pill:focus-visible {
-  color: #000;
-  background: #ddfa42;
+  color: var(--ink);
+  background: var(--klein-blue);
 }
 
 .pill:hover .labelTrack > span,
@@ -185,7 +203,7 @@
 
 .languageSwitcher button:focus-visible {
   border-radius: 3px;
-  outline: 2px solid #ddfa42;
+  outline: 2px solid var(--focus-blue);
   outline-offset: 2px;
 }
 
@@ -224,6 +242,10 @@
 @media (width < 768px) {
   .siteHeader {
     top: 0;
+  }
+
+  .documentHeader::before {
+    inset: 0 0 -18px;
   }
 
   .desktopHeader {

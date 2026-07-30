@@ -27,11 +27,19 @@
 }
 
 :root {
-  --page-bg: #000;
-  --ink: #fff;
+  --page-bg: #131313;
+  --scene-bg: #000;
+  --surface-deep: #0e0e0e;
+  --surface: #1b1b1b;
+  --surface-raised: #1f1f1f;
+  --ink: #e2e2e2;
+  --ink-secondary: #c4c5d6;
+  --ink-muted: #8e909f;
+  --line: #222;
+  --line-strong: #444653;
+  --klein-blue: #002fa7;
+  --focus-blue: #b8c4ff;
   --glass: rgb(255 255 255 / 10%);
-  --glass-hover: #ddfa42;
-  --lime: #ddfa42;
   --edge: rgb(255 255 255 / 24%);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -47,11 +55,11 @@ body {
   margin: 0;
   background: var(--page-bg);
   color: var(--ink);
-  overscroll-behavior: none;
+  overscroll-behavior-x: none;
 }
 
 body {
-  overflow: hidden;
+  overflow-x: hidden;
   font-family:
     "FK Display",
     "PingFang SC",
@@ -73,6 +81,6 @@ a {
 }
 
 ::selection {
-  color: #000;
-  background: var(--lime);
+  color: var(--ink);
+  background: var(--klein-blue);
 }

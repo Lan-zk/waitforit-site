@@ -101,7 +101,6 @@ async function seed() {
       nav: [
         { label: 'Work', href: '/projects' },
         { label: 'Blog', href: '/blog' },
-        { label: 'Photography', href: '/photography' },
         { label: 'Resume', href: '/resume' },
       ],
     },

@@ -60,9 +60,11 @@ test('falls back to Chinese for an invalid cookie and switches on content pages'
     page.waitForURL('**/projects/xylo', { waitUntil: 'commit' }),
     page.getByRole('link', { name: 'XYLO' }).click(),
   ])
-  await expect(page.getByText('Content coming soon')).toBeVisible({
+  await expect(page.getByRole('heading', { level: 1, name: 'XYLO' })).toBeVisible({
     timeout: 30_000,
   })
+  await expect(page.getByText('A spatial brand system.')).toBeVisible()
+  await expect(page.getByRole('img', { name: 'XYLO' })).toBeVisible()
 })
 
 test('renders the localized not-found page', async ({ page }) => {

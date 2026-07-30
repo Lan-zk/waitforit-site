@@ -4,11 +4,10 @@ import { getPayload } from 'payload'
 import type { ProjectTexture } from '@/types/project'
 import { getContentImageMetadata } from '@/content/readContentImage'
 
-type ContentSlug = 'projects' | 'photography'
+type ContentSlug = 'projects'
 
 const ROUTE_PREFIX: Record<ContentSlug, string> = {
   projects: '/projects',
-  photography: '/photography',
 }
 
 interface CoverMedia {
@@ -65,11 +64,12 @@ function toTexture(entry: RawEntry, index: number): ProjectTexture | null {
 export async function getManifest(): Promise<ProjectTexture[]> {
   const payload = await getPayload({ config })
 
-  const [projects, blogs, series, photography, resume] = await Promise.all([
+  const [projects, blogs, series, resume] = await Promise.all([
     payload.find({
       collection: 'projects',
       depth: 1,
       limit: 100,
+      overrideAccess: false,
       sort: 'sortOrder',
       select: { title: true, slug: true, cover: true, sortOrder: true },
     }),
@@ -106,16 +106,10 @@ export async function getManifest(): Promise<ProjectTexture[]> {
         title: true,
       },
     }),
-    payload.find({
-      collection: 'photography',
-      depth: 1,
-      limit: 100,
-      sort: 'sortOrder',
-      select: { title: true, slug: true, cover: true, sortOrder: true },
-    }),
     payload.findGlobal({
       slug: 'resume',
       depth: 1,
+      overrideAccess: false,
       select: { title: true, cover: true, sortOrder: true },
     }),
   ])
@@ -135,7 +129,6 @@ export async function getManifest(): Promise<ProjectTexture[]> {
   }
 
   pushDocs('projects', projects.docs as CollectionDoc[])
-  pushDocs('photography', photography.docs as CollectionDoc[])
 
   const pushPublishingDocs = async (
     prefix: '/blog' | '/novel',

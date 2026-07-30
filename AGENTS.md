@@ -14,10 +14,14 @@ Current baseline:
 - Next.js `16.2.12`, React `19.2.6`
 - SQLite for local development and the current self-hosted baseline
 - Lexical rich text and local media storage
-- Collections: `users`, `media`, `projects`, `posts`, `novels`, `photography`
+- Collections: `users`, `media`, `projects`, `writings`, `series`, `photography`
 - Globals: `resume`, `site-settings`, `header`, `footer`
 - Public UI locales: Simplified Chinese (`zh-CN`, default) and English (`en`)
-- Detail pages are still phase-one shells; do not describe them as finished content
+- Blog and multi-chapter novel reading routes are implemented
+- Project list and detail routes consume the current structured fields; photography remains
+  intentionally deferred and hidden from public discovery
+- Resume uses a structured Global, existing Project relationships, a fixed Chinese frontend
+  template, and the preserved Lexical field for supplementary content
 
 `README.md`, `docs/ARCHITECTURE.md`, and `docs/payload/INDEX.md` may contain older
 baseline descriptions. Verify current behavior from code, `package.json`,
@@ -173,6 +177,10 @@ npm run test:e2e
 `npm run check` covers lint, generated types, integration tests, and production
 build. It does not replace browser verification of the WebGL scene, language
 switching, Admin workflows, media delivery, or Access denial paths.
+
+The E2E rationale, suite boundaries, fixture requirements, and completion gates are
+documented in `docs/TESTING.md`. Ordinary E2E results are not reproducible evidence
+until their database and publishing-content fixtures are prepared explicitly.
 
 For frontend changes, verify at least:
 

@@ -76,7 +76,7 @@
 
 .markdown blockquote {
   margin-inline: 0;
-  border-inline-start: 3px solid #ddfa42;
+  border-inline-start: 3px solid var(--klein-blue);
   padding: 0.2em 0 0.2em 1.15em;
   color: rgb(255 255 255 / 66%);
 }
@@ -91,18 +91,18 @@
 
 .markdown a {
   border-radius: 2px;
-  color: #ddfa42;
+  color: var(--focus-blue);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
 }
 
 .markdown a:hover {
-  color: #fff;
+  color: var(--ink);
 }
 
 .markdown a:focus-visible {
-  outline: 2px solid #ddfa42;
+  outline: 2px solid var(--focus-blue);
   outline-offset: 4px;
 }
 
@@ -129,7 +129,7 @@
   border-radius: 0.3em;
   padding: 0.12em 0.32em;
   background: rgb(255 255 255 / 8%);
-  color: #f4ffbc;
+  color: #d9e0ff;
   font-family:
     "SFMono-Regular",
     Consolas,
@@ -200,7 +200,7 @@
 
 .markdown input[type="checkbox"] {
   margin-inline: 0 0.55em;
-  accent-color: #ddfa42;
+  accent-color: var(--klein-blue);
 }
 
 .markdown :global(.contains-task-list) {

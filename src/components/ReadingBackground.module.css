@@ -1,0 +1,44 @@
+.background {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.background::before,
+.background::after {
+  position: absolute;
+  content: "";
+  inset: 0;
+}
+
+.background::before {
+  background: var(--page-bg);
+}
+
+.background::after {
+  opacity: 0.58;
+  background:
+    radial-gradient(circle at 88% 8%, rgb(0 47 167 / 28%), transparent 34%),
+    radial-gradient(circle at 12% 82%, rgb(184 196 255 / 8%), transparent 42%);
+}
+
+.novel::after {
+  opacity: 0.45;
+  background:
+    radial-gradient(circle at 50% 36%, rgb(35 45 84 / 32%), transparent 40%),
+    radial-gradient(circle at 74% 72%, rgb(0 47 167 / 16%), transparent 38%);
+}
+
+.canvas {
+  position: absolute !important;
+  z-index: 1;
+  inset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .background::after {
+    opacity: 0.35;
+  }
+}

@@ -30,8 +30,6 @@ export default async function NovelList() {
   return (
     <ContentPage
       homeLabel={dictionary.pages.backHome}
-      languageLabels={dictionary.language}
-      locale={locale}
       title={dictionary.pages.novel}
       description={dictionary.pages.novelIntro}
     >

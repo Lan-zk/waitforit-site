@@ -2,15 +2,30 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { getI18n } from '@/i18n/server'
+import { getSiteChrome } from '@/utilities/getSiteChrome'
 
 import './globals.css'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { dictionary } = await getI18n()
+  const [{ dictionary }, site] = await Promise.all([
+    getI18n(),
+    getSiteChrome(),
+  ])
+  const title = site.brandName || dictionary.metadata.title
+  const description = site.description || dictionary.metadata.description
+  const metadataBase = site.siteURL ? new URL(site.siteURL) : undefined
 
   return {
-    description: dictionary.metadata.description,
-    title: dictionary.metadata.title,
+    alternates: metadataBase ? { canonical: '/' } : undefined,
+    description,
+    metadataBase,
+    openGraph: {
+      description,
+      title,
+      type: 'website',
+      url: metadataBase ? '/' : undefined,
+    },
+    title,
   }
 }
 

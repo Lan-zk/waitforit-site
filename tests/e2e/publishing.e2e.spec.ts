@@ -23,6 +23,9 @@ test.describe('Git Markdown publishing', () => {
         name: '内容仓库如何驱动个人站',
       }),
     ).toHaveCount(1)
+    await expect(
+      page.locator('[data-reading-background="side-rays"]'),
+    ).toBeVisible()
     await expect(page.getByRole('table')).toBeVisible()
     await expect(page.locator('pre code')).toContainText('PublishedWriting')
     const image = page.getByRole('img', {
@@ -69,6 +72,9 @@ test.describe('Git Markdown publishing', () => {
       page.waitForURL(/\/novel\/last-train\/arrival$/, { timeout: 30_000 }),
       page.getByRole('link', { name: '抵达' }).click(),
     ])
+    await expect(
+      page.locator('[data-reading-background="galaxy"]'),
+    ).toBeVisible()
     await expect(page.locator('article')).toHaveAttribute('lang', 'zh-CN')
     await expect(page.getByText('雨是在晚上十点后变大的。')).toBeVisible()
     await Promise.all([
@@ -76,6 +82,18 @@ test.describe('Git Markdown publishing', () => {
       page.getByRole('link', { name: /下一章.*无名站台/ }).click(),
     ])
     await expect(page.getByText('列车停稳后，只有第三节车厢开了门。')).toBeVisible()
+  })
+
+  test('uses the static reading fallback when reduced motion is requested', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('http://localhost:3000/blog/site-content-publishing')
+
+    await expect(
+      page.locator('[data-reading-background="fallback"]'),
+    ).toBeVisible()
+    await expect(page.locator('[data-reading-background] canvas')).toHaveCount(0)
   })
 
   test('keeps wide Markdown content inside a 390px mobile viewport', async ({

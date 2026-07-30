@@ -1,4 +1,9 @@
 .siteFooter {
+  color: var(--ink);
+  font-family: "Mabry", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.sceneFooter {
   position: fixed;
   right: 0;
   bottom: 44px;
@@ -20,7 +25,7 @@
 }
 
 /* Hidden while the homepage intro plays; revealed once the gallery settles. */
-:root[data-site-intro="scene"] .siteFooter {
+:root[data-site-intro="scene"] .sceneFooter {
   visibility: hidden;
   opacity: 0;
 }
@@ -98,14 +103,109 @@
   transform: translateY(-17.4017px);
 }
 
+.documentFooter {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 96px);
+  border-block-start: 1px solid var(--line-strong);
+  padding: clamp(36px, 6vw, 72px) clamp(24px, 6vw, 96px);
+  background: var(--surface-deep);
+}
+
+.documentIntro {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+}
+
+.description {
+  max-width: 48ch;
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.55;
+}
+
+.documentEmail {
+  width: fit-content;
+  color: var(--focus-blue);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.documentNav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 10px 20px;
+}
+
+.documentNav a,
+.socialLinks a {
+  width: fit-content;
+  color: var(--ink-secondary);
+}
+
+.documentNav a:hover,
+.documentNav a:focus-visible,
+.socialLinks a:hover,
+.socialLinks a:focus-visible,
+.documentEmail:hover,
+.documentEmail:focus-visible {
+  color: var(--focus-blue);
+}
+
+.documentNav a:focus-visible,
+.socialLinks a:focus-visible,
+.documentEmail:focus-visible {
+  border-radius: 3px;
+  outline: 2px solid var(--focus-blue);
+  outline-offset: 4px;
+}
+
+.documentMeta {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-block-start: 1px solid var(--line);
+  padding-block-start: 24px;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.socialLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px 20px;
+}
+
 @media (width < 768px) {
-  .siteFooter {
+  .sceneFooter {
     display: none;
+  }
+
+  .documentFooter {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 40px 24px 112px;
+  }
+
+  .documentMeta {
+    grid-column: 1;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .socialLinks {
+    justify-content: flex-start;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .siteFooter,
+  .sceneFooter,
   .emailLink::after,
   .labelTrack {
     transition-duration: 0.01ms;

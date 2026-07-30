@@ -2,15 +2,30 @@ import { expect, type Page, test } from '@playwright/test'
 
 async function findClickableCard(page: Page) {
   const canvas = page.locator('canvas')
-  const hoverLabel = page.locator('canvas + div[aria-hidden="true"]')
+  const hoverLabel = page.locator('canvas ~ div[data-visible]').first()
+  await expect
+    .poll(async () => Number(await canvas.getAttribute('data-texture-count')))
+    .toBeGreaterThan(0)
+  await expect
+    .poll(async () =>
+      Number(await canvas.getAttribute('data-scene-visible-count')),
+    )
+    .toBeGreaterThan(0)
   const box = await canvas.boundingBox()
   if (!box) {
     throw new Error('Homepage canvas has no bounding box.')
   }
 
-  for (let y = box.y + 80; y < box.y + box.height - 40; y += 48) {
-    for (let x = box.x + 40; x < box.x + box.width - 40; x += 48) {
-      await page.mouse.move(x, y)
+  for (let y = box.y + 80; y < box.y + box.height - 40; y += 40) {
+    for (let x = box.x + 40; x < box.x + box.width - 40; x += 40) {
+      await canvas.dispatchEvent('pointermove', {
+        clientX: x,
+        clientY: y,
+        isPrimary: true,
+        pointerId: 1,
+        pointerType: 'mouse',
+      })
+      await page.waitForTimeout(20)
       const visible = await hoverLabel.getAttribute('data-visible')
       const title = await hoverLabel.textContent()
       if (visible === 'true' && title?.trim()) {
@@ -73,7 +88,7 @@ test('clicking a rendered canvas card opens its detail route', async ({
     .filter({ hasText: card.title })
     .first()
   const href = await cardLink.getAttribute('href')
-  expect(href).toMatch(/^\/(?:blog|novel|photography|projects|resume)/)
+  expect(href).toMatch(/^\/(?:blog|novel|projects|resume)/)
 
   await Promise.all([
     page.waitForURL((url) => url.pathname === href, { waitUntil: 'commit' }),
@@ -281,7 +296,7 @@ test('supports touch drag and reveals a tappable mobile card label', async ({
   expect(selected).toBeTruthy()
   await expect(selectedLink).toHaveAttribute(
     'href',
-    /^\/(?:blog|novel|photography|projects|resume)/,
+    /^\/(?:blog|novel|projects|resume)/,
   )
   await expect(selectedLink).not.toHaveText('')
 })
@@ -297,5 +312,17 @@ test('reveals the project index when a keyboard link receives focus', async ({
 
   await expect(firstProjectLink).toBeFocused()
   await expect(projectNavigation).toBeVisible()
-  await expect(firstProjectLink).toHaveCSS('background-color', 'rgb(221, 250, 66)')
+  await expect(firstProjectLink).toHaveCSS('background-color', 'rgb(0, 47, 167)')
+})
+
+test('keeps photography out of homepage discovery', async ({ page }) => {
+  await page.goto('http://localhost:3000/', { waitUntil: 'networkidle' })
+
+  await expect(page.locator('a[href^="/photography"]')).toHaveCount(0)
+  const manifestLinks = await page
+    .locator('canvas ~ nav a')
+    .evaluateAll((links) => links.map((link) => link.getAttribute('href')))
+  expect(manifestLinks.some((href) => href?.startsWith('/photography'))).toBe(
+    false,
+  )
 })

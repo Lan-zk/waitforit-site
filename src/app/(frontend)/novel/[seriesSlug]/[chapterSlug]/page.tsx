@@ -5,6 +5,7 @@ import React from 'react'
 import { ChapterNavigation } from '@/components/ChapterNavigation'
 import { ContentPage } from '@/components/ContentPage'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
+import { ReadingBackground } from '@/components/ReadingBackground'
 import { ContentFileError } from '@/content/paths'
 import { readMarkdownFile } from '@/content/readMarkdown'
 import { getI18n } from '@/i18n/server'
@@ -29,7 +30,7 @@ export default async function NovelChapter({
   const series = seriesResult.docs[0]
   if (!series) notFound()
 
-  const [chapterResult, chapterList, { dictionary, locale }] =
+  const [chapterResult, chapterList, { dictionary }] =
     await Promise.all([
       payload.find({
         collection: 'writings',
@@ -88,12 +89,12 @@ export default async function NovelChapter({
 
   return (
     <ContentPage
+      background={<ReadingBackground kind="novel" />}
       backHref={`/novel/${series.slug}`}
       homeLabel={dictionary.pages.backNovel}
-      languageLabels={dictionary.language}
-      locale={locale}
       title={chapter.title}
       description={series.title}
+      variant="reading"
     >
       <article lang={chapter.language}>
         <MarkdownRenderer

@@ -116,10 +116,10 @@
 }
 
 .projectLinks:focus-within a:focus-visible {
-  outline: 2px solid #ddfa42;
+  outline: 2px solid var(--focus-blue);
   outline-offset: -2px;
-  background: #ddfa42;
-  color: #000;
+  background: var(--klein-blue);
+  color: #fff;
 }
 
 .sceneCanvas[data-webgl-unavailable="true"] ~ .projectLinks {
@@ -149,9 +149,9 @@
 
 .sceneCanvas[data-webgl-unavailable="true"] ~ .projectLinks a:hover,
 .sceneCanvas[data-webgl-unavailable="true"] ~ .projectLinks a:focus-visible {
-  border-color: #ddfa42;
-  background: #ddfa42;
-  color: #000;
+  border-color: var(--focus-blue);
+  background: var(--klein-blue);
+  color: #fff;
 }
 
 @media (width < 768px) {
@@ -218,7 +218,7 @@
   }
 
   .mobileCardLink:focus-visible {
-    outline: 2px solid #ddfa42;
+    outline: 2px solid var(--focus-blue);
     outline-offset: 3px;
   }
 

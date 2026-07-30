@@ -4,6 +4,7 @@ import React from 'react'
 
 import { ContentPage } from '@/components/ContentPage'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
+import { ReadingBackground } from '@/components/ReadingBackground'
 import { ContentFileError } from '@/content/paths'
 import { readMarkdownFile } from '@/content/readMarkdown'
 import { getI18n } from '@/i18n/server'
@@ -29,7 +30,7 @@ export default async function PostDetail({
   })
   const doc = docs[0]
   if (!doc) notFound()
-  const { dictionary, locale } = await getI18n()
+  const { dictionary } = await getI18n()
   let markdown: string
   try {
     markdown = await readMarkdownFile(doc.sourcePath)
@@ -45,12 +46,12 @@ export default async function PostDetail({
 
   return (
     <ContentPage
+      background={<ReadingBackground kind="blog" />}
       backHref="/blog"
       homeLabel={dictionary.pages.backBlog}
-      languageLabels={dictionary.language}
-      locale={locale}
       title={doc.title}
       description={doc.summary ?? undefined}
+      variant="reading"
     >
       <article lang={doc.language}>
         <MarkdownRenderer

@@ -26,9 +26,10 @@ interface HeaderLabels {
 interface SiteHeaderProps {
   nav: NavItem[]
   brandName: string
-  contactHref: string
+  contactHref?: string
   labels: HeaderLabels
   locale: Locale
+  variant?: 'document' | 'scene'
 }
 
 function formatLocalTime(date: Date, locale: Locale) {
@@ -157,11 +158,16 @@ export function SiteHeader({
   contactHref,
   labels,
   locale,
+  variant = 'scene',
 }: SiteHeaderProps) {
   const time = useLocalTime(locale)
 
   return (
-    <header className={styles.siteHeader}>
+    <header
+      className={`${styles.siteHeader} ${
+        variant === 'scene' ? styles.sceneHeader : styles.documentHeader
+      }`}
+    >
       <div className={styles.desktopHeader} data-header-layout="desktop">
         <div className={styles.leftGroup}>
           <HomeLink label={labels.home} />
@@ -177,7 +183,9 @@ export function SiteHeader({
         </Link>
 
         <div className={styles.rightGroup}>
-          <PillLink href={contactHref} label={labels.contact} />
+          {contactHref ? (
+            <PillLink href={contactHref} label={labels.contact} />
+          ) : null}
           <LanguageSwitcher labels={labels.language} locale={locale} />
           <div
             aria-label={time ? `${labels.localTime} ${time}` : labels.localTime}
@@ -200,6 +208,9 @@ export function SiteHeader({
           {nav.map((item) => (
             <PillLink key={item.href} {...item} />
           ))}
+          {contactHref ? (
+            <PillLink href={contactHref} label={labels.contact} />
+          ) : null}
         </nav>
       </div>
     </header>

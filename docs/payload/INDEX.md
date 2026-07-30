@@ -29,6 +29,7 @@ Agent 在修改 Payload 配置或前端数据层之前，应先阅读：
 | [07-media-and-storage.md](./07-media-and-storage.md) | 媒体字段、图片尺寸、访问控制和存储选择 | 图片上传、OG 图、对象存储 |
 | [08-plugin-matrix.md](./08-plugin-matrix.md) | 官方插件的采用顺序、收益、代价和前置条件 | SEO、重定向、搜索、表单、MCP |
 | [09-schema-migrations-and-testing.md](./09-schema-migrations-and-testing.md) | Schema 变更、迁移、类型生成和测试闭环 | 新增字段、部署、回滚、CI |
+| [../TESTING.md](../TESTING.md) | 本项目集成测试与 E2E 的职责、数据边界和完成门禁 | 前端功能、内容发布、WebGL 回归 |
 
 ## 项目当前基线
 
@@ -37,8 +38,13 @@ Agent 在修改 Payload 配置或前端数据层之前，应先阅读：
 - Node.js：`24.x`
 - 数据库：SQLite
 - 富文本：Lexical
-- 当前 Collections：`users`、`media`
-- 当前阶段：Blank Template 基线，内容模型尚未落地
+- 当前 Collections：`users`、`media`、`projects`、`writings`、`series`、
+  `photography`
+- 当前 Globals：`resume`、`site-settings`、`header`、`footer`
+- 内容正文：独立 Git 发布仓库中的 Markdown；Payload 只保存同步元数据
+- 公共 UI：简体中文（默认）与英语；作者正文不自动翻译
+- 当前阶段：博客、多章节小说、项目详情和结构化简历模板已落地；简历真实内容待录入，
+  摄影模型保留但公开入口暂缓
 
 ## 维护要求
 

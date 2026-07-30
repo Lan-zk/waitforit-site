@@ -25,11 +25,11 @@
 
 .link:hover {
   padding-inline: 12px;
-  color: #ddfa42;
+  color: var(--focus-blue);
 }
 
 .link:focus-visible {
-  outline: 2px solid #ddfa42;
+  outline: 2px solid var(--focus-blue);
   outline-offset: 4px;
 }
 

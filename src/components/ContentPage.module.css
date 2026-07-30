@@ -1,36 +1,59 @@
 .page {
-  position: fixed;
-  inset: 0;
+  position: relative;
+  z-index: 1;
   min-width: 0;
-  overflow-y: auto;
-  padding: clamp(88px, 10vw, 144px) clamp(24px, 6vw, 96px) 64px;
-  background: #000;
-  color: #fff;
+  min-height: 100svh;
+  padding: clamp(120px, 12vw, 172px) clamp(24px, 6vw, 96px)
+    clamp(72px, 9vw, 120px);
+  background: var(--page-bg);
+  color: var(--ink);
+}
+
+.readingPage {
+  padding-inline: max(24px, calc((100vw - 720px) / 2));
+  background: rgb(19 19 19 / 76%);
+  backdrop-filter: blur(2px);
+}
+
+.readingPage .pageHeader,
+.readingPage .content {
+  max-width: 720px;
+}
+
+.projectPage,
+.resumePage {
+  padding-inline: max(24px, calc((100vw - 1240px) / 2));
+}
+
+.projectPage .pageHeader,
+.projectPage .content,
+.resumePage .pageHeader,
+.resumePage .content {
+  max-width: 1240px;
 }
 
 .homeLink {
-  position: fixed;
-  top: 36px;
-  left: clamp(24px, 3.784vw, 72px);
-  z-index: 2100;
   display: inline-flex;
-  min-height: 32px;
+  min-height: 36px;
   align-items: center;
+  margin-block-end: clamp(32px, 5vw, 64px);
+  border: 1px solid var(--line-strong);
   border-radius: 999px;
   padding: 8px 14px;
-  background: rgb(255 255 255 / 10%);
+  background: var(--surface);
+  color: var(--ink-secondary);
   font-size: 14px;
   line-height: 1;
 }
 
 .homeLink:hover,
 .homeLink:focus-visible {
-  background: #ddfa42;
-  color: #000;
+  background: var(--klein-blue);
+  color: var(--ink);
 }
 
 .homeLink:focus-visible {
-  outline: 2px solid #ddfa42;
+  outline: 2px solid var(--focus-blue);
   outline-offset: 3px;
 }
 
@@ -38,9 +61,9 @@
   max-width: 18ch;
   margin: 0;
   overflow-wrap: anywhere;
-  font-size: clamp(42px, 8vw, 112px);
+  font-size: clamp(38px, 6vw, 64px);
   font-weight: 400;
-  line-height: 0.94;
+  line-height: 1;
   text-wrap: balance;
 }
 
@@ -52,7 +75,7 @@
 .description {
   max-width: 60ch;
   margin: clamp(20px, 3vw, 32px) 0 0;
-  color: rgb(255 255 255 / 64%);
+  color: var(--ink-secondary);
   font-family: "Mabry", "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: clamp(17px, 1.6vw, 23px);
   line-height: 1.55;
@@ -76,15 +99,18 @@
 }
 
 .content a {
-  color: #ddfa42;
+  color: var(--focus-blue);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
 }
 
 @media (width < 768px) {
-  .homeLink {
-    top: 24px;
-    left: 24px;
+  .page {
+    padding-block-start: 112px;
+  }
+
+  .readingPage {
+    padding-inline: 22px;
   }
 }
