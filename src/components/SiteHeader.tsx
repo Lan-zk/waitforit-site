@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 
 import { setLocale } from '@/app/(frontend)/actions'
 import type { Locale } from '@/i18n/config'
@@ -16,55 +15,21 @@ interface NavItem {
 }
 
 interface HeaderLabels {
-  contact: string
+  email: string
+  github: string
   home: string
   language: Dictionary['language']
-  localTime: string
   navigation: string
 }
 
 interface SiteHeaderProps {
   nav: NavItem[]
   brandName: string
-  contactHref?: string
+  emailHref?: string
+  githubHref?: string
   labels: HeaderLabels
   locale: Locale
   variant?: 'document' | 'scene'
-}
-
-function formatLocalTime(date: Date, locale: Locale) {
-  return new Intl.DateTimeFormat(locale, {
-    hour: '2-digit',
-    hour12: locale === 'en',
-    minute: '2-digit',
-  }).format(date)
-}
-
-function useLocalTime(locale: Locale) {
-  const [time, setTime] = useState('')
-
-  useEffect(() => {
-    let minuteTimer: ReturnType<typeof setInterval> | undefined
-
-    const updateTime = () => setTime(formatLocalTime(new Date(), locale))
-    const now = new Date()
-    const millisecondsUntilNextMinute =
-      (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
-
-    updateTime()
-
-    const alignmentTimer = window.setTimeout(() => {
-      updateTime()
-      minuteTimer = setInterval(updateTime, 60_000)
-    }, millisecondsUntilNextMinute)
-
-    return () => {
-      window.clearTimeout(alignmentTimer)
-      if (minuteTimer) clearInterval(minuteTimer)
-    }
-  }, [locale])
-
-  return time
 }
 
 function PillLink({ href, label }: { href: string; label: string }) {
@@ -96,17 +61,75 @@ function HomeLink({
   )
 }
 
-function GlobeIcon() {
+function GitHubIcon() {
   return (
     <svg
       aria-hidden="true"
-      className={styles.globeIcon}
-      viewBox="0 0 16 16"
-      fill="none"
+      viewBox="0 0 24 24"
+      fill="currentColor"
     >
-      <circle cx="8" cy="8" r="6.35" />
-      <path d="M1.9 8h12.2M8 1.65c1.7 1.73 2.55 3.85 2.55 6.35S9.7 12.62 8 14.35M8 1.65C6.3 3.38 5.45 5.5 5.45 8S6.3 12.62 8 14.35" />
+      <path d="M12 2C6.477 2 2 6.59 2 12.253c0 4.53 2.865 8.374 6.839 9.73.5.095.682-.222.682-.494 0-.244-.009-.889-.014-1.745-2.782.62-3.369-1.374-3.369-1.374-.455-1.184-1.11-1.499-1.11-1.499-.908-.636.069-.623.069-.623 1.004.073 1.532 1.057 1.532 1.057.892 1.567 2.341 1.115 2.91.852.091-.663.349-1.115.635-1.371-2.221-.259-4.556-1.14-4.556-5.069 0-1.12.389-2.035 1.029-2.752-.103-.26-.446-1.303.098-2.714 0 0 .84-.276 2.75 1.051A9.303 9.303 0 0 1 12 6.976a9.29 9.29 0 0 1 2.504.346c1.909-1.327 2.748-1.051 2.748-1.051.546 1.411.203 2.454.1 2.714.64.717 1.027 1.632 1.027 2.752 0 3.939-2.339 4.807-4.566 5.061.359.317.679.945.679 1.905 0 1.374-.013 2.482-.013 2.819 0 .274.18.594.688.493C19.138 20.625 22 16.783 22 12.253 22 6.59 17.523 2 12 2Z" />
     </svg>
+  )
+}
+
+function EmailIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.75"
+    >
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m4 7 8 6 8-6" />
+    </svg>
+  )
+}
+
+function ContactLinks({
+  emailHref,
+  githubHref,
+  labels,
+  mobile = false,
+}: {
+  emailHref?: string
+  githubHref?: string
+  labels: Pick<HeaderLabels, 'email' | 'github'>
+  mobile?: boolean
+}) {
+  if (!emailHref && !githubHref) {
+    return null
+  }
+
+  return (
+    <div
+      className={`${styles.contactLinks} ${mobile ? styles.mobileContactLinks : ''}`}
+    >
+      {githubHref ? (
+        <a
+          aria-label={labels.github}
+          className={styles.iconLink}
+          href={githubHref}
+          rel="noreferrer"
+          target="_blank"
+        >
+          <GitHubIcon />
+        </a>
+      ) : null}
+      {emailHref ? (
+        <a
+          aria-label={labels.email}
+          className={styles.iconLink}
+          href={emailHref}
+        >
+          <EmailIcon />
+        </a>
+      ) : null}
+    </div>
   )
 }
 
@@ -155,13 +178,12 @@ export function LanguageSwitcher({
 export function SiteHeader({
   nav,
   brandName,
-  contactHref,
+  emailHref,
+  githubHref,
   labels,
   locale,
   variant = 'scene',
 }: SiteHeaderProps) {
-  const time = useLocalTime(locale)
-
   return (
     <header
       className={`${styles.siteHeader} ${
@@ -183,22 +205,16 @@ export function SiteHeader({
         </Link>
 
         <div className={styles.rightGroup}>
-          {contactHref ? (
-            <PillLink href={contactHref} label={labels.contact} />
-          ) : null}
+          <ContactLinks
+            emailHref={emailHref}
+            githubHref={githubHref}
+            labels={labels}
+          />
           <LanguageSwitcher labels={labels.language} locale={locale} />
-          <div
-            aria-label={time ? `${labels.localTime} ${time}` : labels.localTime}
-            className={styles.timeCapsule}
-          >
-            <span className={styles.desktopTime}>{time || '\u00a0'}</span>
-            <GlobeIcon />
-          </div>
         </div>
       </div>
 
       <div className={styles.mobileHeader} data-header-layout="mobile">
-        <time className={styles.mobileTime}>{time || '\u00a0'}</time>
         <HomeLink label={labels.home} mobile />
         <LanguageSwitcher labels={labels.language} locale={locale} mobile />
         <nav
@@ -208,9 +224,12 @@ export function SiteHeader({
           {nav.map((item) => (
             <PillLink key={item.href} {...item} />
           ))}
-          {contactHref ? (
-            <PillLink href={contactHref} label={labels.contact} />
-          ) : null}
+          <ContactLinks
+            emailHref={emailHref}
+            githubHref={githubHref}
+            labels={labels}
+            mobile
+          />
         </nav>
       </div>
     </header>

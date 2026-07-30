@@ -11,6 +11,25 @@ test.describe('Git Markdown publishing', () => {
     await expect(
       page.getByRole('heading', { level: 1, name: '博客' }),
     ).toBeVisible()
+    const blogCard = page.locator('[data-spotlight-card]')
+    await expect(blogCard).toHaveCount(1)
+    await expect(blogCard).toHaveCSS('text-decoration-line', 'none')
+    await expect(blogCard).toHaveCSS('border-radius', '12px')
+
+    const cardBox = await blogCard.boundingBox()
+    expect(cardBox).not.toBeNull()
+    await page.mouse.move(
+      (cardBox?.x ?? 0) + (cardBox?.width ?? 0) / 2,
+      (cardBox?.y ?? 0) + (cardBox?.height ?? 0) / 2,
+    )
+    await expect
+      .poll(() =>
+        blogCard.evaluate((element) =>
+          getComputedStyle(element).getPropertyValue('--spotlight-opacity').trim(),
+        ),
+      )
+      .toBe('1')
+
     await Promise.all([
       page.waitForURL(/\/blog\/site-content-publishing$/, { timeout: 30_000 }),
       page
@@ -26,6 +45,15 @@ test.describe('Git Markdown publishing', () => {
     await expect(
       page.locator('[data-reading-background="side-rays"]'),
     ).toBeVisible()
+    await expect(
+      page.locator('[data-reading-kind="blog"] canvas'),
+    ).toBeVisible()
+    await expect(page.locator('main')).toHaveCSS(
+      'background-color',
+      'rgba(14, 14, 14, 0.18)',
+    )
+    await expect(page.locator('[data-reading-scroll-reveal]')).toHaveCount(1)
+    await expect(page.locator('footer')).toHaveCount(0)
     await expect(page.getByRole('table')).toBeVisible()
     await expect(page.locator('pre code')).toContainText('PublishedWriting')
     const image = page.getByRole('img', {
@@ -55,7 +83,13 @@ test.describe('Git Markdown publishing', () => {
   test('renders a series, ordered chapters, and chapter navigation', async ({
     page,
   }) => {
-    await page.goto('http://localhost:3000/novel/last-train')
+    await page.goto('http://localhost:3000/novel')
+    const novelCard = page.locator('[data-spotlight-card]')
+    await expect(novelCard).toHaveCount(1)
+    await expect(novelCard).toHaveCSS('text-decoration-line', 'none')
+
+    await novelCard.click()
+    await page.waitForURL(/\/novel\/last-train$/, { timeout: 30_000 })
 
     await expect(
       page.getByRole('heading', { level: 1, name: '最后一班列车' }),
@@ -75,6 +109,25 @@ test.describe('Git Markdown publishing', () => {
     await expect(
       page.locator('[data-reading-background="galaxy"]'),
     ).toBeVisible()
+    const scrollReveal = page.locator('[data-reading-scroll-reveal]')
+    await expect(scrollReveal).toHaveCount(1)
+    await expect(page.locator('footer')).toHaveCount(0)
+    const lastParagraph = scrollReveal.locator(':scope > p').last()
+    await expect
+      .poll(() =>
+        lastParagraph.evaluate((element) =>
+          Number.parseFloat(getComputedStyle(element).opacity),
+        ),
+      )
+      .toBeLessThan(1)
+    await lastParagraph.scrollIntoViewIfNeeded()
+    await expect
+      .poll(() =>
+        lastParagraph.evaluate((element) =>
+          Number.parseFloat(getComputedStyle(element).opacity),
+        ),
+      )
+      .toBeGreaterThan(0.98)
     await expect(page.locator('article')).toHaveAttribute('lang', 'zh-CN')
     await expect(page.getByText('雨是在晚上十点后变大的。')).toBeVisible()
     await Promise.all([
@@ -94,6 +147,9 @@ test.describe('Git Markdown publishing', () => {
       page.locator('[data-reading-background="fallback"]'),
     ).toBeVisible()
     await expect(page.locator('[data-reading-background] canvas')).toHaveCount(0)
+    const firstBlock = page.locator('[data-reading-scroll-reveal] > *').first()
+    await expect(firstBlock).toHaveCSS('filter', 'none')
+    await expect(firstBlock).toHaveCSS('opacity', '1')
   })
 
   test('keeps wide Markdown content inside a 390px mobile viewport', async ({
@@ -111,6 +167,36 @@ test.describe('Git Markdown publishing', () => {
     expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth)
     await expect(page.getByRole('table')).toBeVisible()
     await expect(page.locator('pre')).toBeVisible()
+  })
+
+  test('keeps scrolling reading content behind the mobile header scrim', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ height: 844, width: 390 })
+    await page.goto('http://localhost:3000/blog/site-content-publishing')
+    await page.evaluate(() => window.scrollTo(0, 240))
+
+    const scrim = await page.locator('body > header').evaluate((element) => {
+      const styles = getComputedStyle(element, '::before')
+      return {
+        backgroundImage: styles.backgroundImage,
+        height: styles.height,
+      }
+    })
+
+    expect(scrim.height).toBe('128px')
+    expect(scrim.backgroundImage).toContain('linear-gradient')
+  })
+
+  test('keeps the mobile document footer compact', async ({ page }) => {
+    await page.setViewportSize({ height: 844, width: 390 })
+    await page.goto('http://localhost:3000/novel')
+
+    const footer = page.locator('footer')
+    const footerBox = await footer.boundingBox()
+
+    expect(footerBox).not.toBeNull()
+    expect(footerBox?.height).toBeLessThanOrEqual(180)
   })
 
   test('returns the controlled not-found page for missing metadata', async ({

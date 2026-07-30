@@ -47,6 +47,7 @@ export default async function NovelList() {
             summary: doc.summary,
             title: doc.title,
           }))}
+          variant="spotlight"
         />
       )}
     </ContentPage>

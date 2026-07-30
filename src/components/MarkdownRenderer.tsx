@@ -7,11 +7,13 @@ import remarkGfm from 'remark-gfm'
 import { resolveMarkdownAssetSource } from '@/content/paths'
 
 import styles from './MarkdownRenderer.module.css'
+import { ReadingScrollReveal } from './ReadingScrollReveal'
 
 interface MarkdownRendererProps {
   documentTitle?: string
   externalLinkLabel?: string
   markdown: string
+  revealOnScroll?: boolean
   sourcePath: string
 }
 
@@ -46,49 +48,59 @@ export function MarkdownRenderer({
   documentTitle,
   externalLinkLabel,
   markdown,
+  revealOnScroll = false,
   sourcePath,
 }: MarkdownRendererProps) {
   const renderedMarkdown = documentTitle
     ? removeDuplicateLeadingTitle(markdown, documentTitle)
     : markdown
-  return (
-    <div className={styles.markdown}>
-      <ReactMarkdown
-        components={{
-          a: (props) => (
-            <MarkdownLink
+
+  const content = (
+    <ReactMarkdown
+      components={{
+        a: (props) => (
+          <MarkdownLink
+            {...props}
+            externalLinkLabel={externalLinkLabel}
+          />
+        ),
+        img: ({ alt, src, ...props }) => {
+          if (typeof src !== 'string' || !src) return null
+          const resolved = resolveMarkdownAssetSource(sourcePath, src)
+          if (!resolved) return null
+          return (
+            // Content dimensions are author-controlled and not known at build time.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               {...props}
-              externalLinkLabel={externalLinkLabel}
+              alt={alt ?? ''}
+              decoding="async"
+              loading="lazy"
+              src={resolved}
             />
-          ),
-          img: ({ alt, src, ...props }) => {
-            if (typeof src !== 'string' || !src) return null
-            const resolved = resolveMarkdownAssetSource(sourcePath, src)
-            if (!resolved) return null
-            return (
-              // Content dimensions are author-controlled and not known at build time.
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                {...props}
-                alt={alt ?? ''}
-                decoding="async"
-                loading="lazy"
-                src={resolved}
-              />
-            )
-          },
-          table: ({ children, ...props }) => (
-            <div className={styles.tableScroll} data-table-scroll>
-              <table {...props}>{children}</table>
-            </div>
-          ),
-        }}
-        rehypePlugins={[rehypeSlug, rehypeSanitize]}
-        remarkPlugins={[remarkGfm]}
-        skipHtml
-      >
-        {renderedMarkdown}
-      </ReactMarkdown>
+          )
+        },
+        table: ({ children, ...props }) => (
+          <div className={styles.tableScroll} data-table-scroll>
+            <table {...props}>{children}</table>
+          </div>
+        ),
+      }}
+      rehypePlugins={[rehypeSlug, rehypeSanitize]}
+      remarkPlugins={[remarkGfm]}
+      skipHtml
+    >
+      {renderedMarkdown}
+    </ReactMarkdown>
+  )
+
+  return revealOnScroll ? (
+    <ReadingScrollReveal className={styles.markdown}>
+      {content}
+    </ReadingScrollReveal>
+  ) : (
+    <div className={styles.markdown}>
+      {content}
     </div>
   )
 }

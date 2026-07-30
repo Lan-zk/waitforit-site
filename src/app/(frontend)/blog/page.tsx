@@ -48,6 +48,7 @@ export default async function BlogList() {
             summary: doc.summary,
             title: doc.title,
           }))}
+          variant="spotlight"
         />
       )}
     </ContentPage>

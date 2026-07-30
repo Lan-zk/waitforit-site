@@ -67,6 +67,122 @@
   line-height: 1;
 }
 
+.spotlightList {
+  display: grid;
+  gap: clamp(14px, 2vw, 20px);
+}
+
+.spotlightItem {
+  border: 0;
+}
+
+.spotlightItem:last-child {
+  border: 0;
+}
+
+.spotlightItem + .spotlightItem {
+  margin-block-start: 0;
+}
+
+.spotlightLink.spotlightLink {
+  --spotlight-x: 50%;
+  --spotlight-y: 50%;
+  --spotlight-opacity: 0;
+
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  grid-template:
+    "index arrow" auto
+    "copy copy" 1fr
+    "meta meta" auto /
+    minmax(0, 1fr) auto;
+  gap: clamp(14px, 2vw, 22px);
+  min-height: 190px;
+  padding: clamp(22px, 3vw, 32px);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  transform: translateY(0);
+  transition:
+    border-color 240ms var(--ease-out),
+    transform 240ms var(--ease-out);
+}
+
+.spotlightLink::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: radial-gradient(
+    circle 260px at var(--spotlight-x) var(--spotlight-y),
+    rgb(184 196 255 / 16%),
+    transparent 72%
+  );
+  content: "";
+  opacity: var(--spotlight-opacity);
+  pointer-events: none;
+  transition: opacity 300ms var(--ease-out);
+}
+
+.spotlightLink > * {
+  position: relative;
+  z-index: 1;
+}
+
+.spotlightLink .index {
+  grid-area: index;
+}
+
+.spotlightLink .copy {
+  grid-area: copy;
+  align-content: end;
+  gap: 10px;
+}
+
+.spotlightLink .meta {
+  grid-area: meta;
+}
+
+.spotlightLink .arrow {
+  grid-area: arrow;
+  transition: transform 240ms var(--ease-out);
+}
+
+.spotlightLink .title {
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.spotlightLink .summary {
+  color: var(--ink-secondary);
+  text-wrap: pretty;
+}
+
+.spotlightLink:hover {
+  padding-inline: clamp(22px, 3vw, 32px);
+  border-color: rgb(184 196 255 / 54%);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+
+.spotlightLink:focus-visible::before {
+  opacity: 1;
+}
+
+.spotlightLink:hover .arrow,
+.spotlightLink:focus-visible .arrow {
+  transform: translate(2px, -2px);
+}
+
+.spotlightLink:focus-visible {
+  border-color: var(--focus-blue);
+  outline: 2px solid var(--focus-blue);
+  outline-offset: 4px;
+}
+
 @media (width < 768px) {
   .link {
     grid-template-columns: 28px minmax(0, 1fr) 20px;
@@ -95,5 +211,58 @@
 
   .summary {
     font-size: 14px;
+  }
+
+  .spotlightLink.spotlightLink {
+    grid-template:
+      "index arrow" auto
+      "copy copy" 1fr
+      "meta meta" auto /
+      minmax(0, 1fr) auto;
+    min-height: 168px;
+    padding: 20px;
+  }
+
+  .spotlightLink:hover {
+    padding-inline: 20px;
+  }
+
+  .spotlightLink .index {
+    grid-area: index;
+  }
+
+  .spotlightLink .copy {
+    grid-area: copy;
+  }
+
+  .spotlightLink .meta {
+    grid-area: meta;
+  }
+
+  .spotlightLink .arrow {
+    grid-area: arrow;
+  }
+
+  .spotlightLink .title {
+    font-size: clamp(26px, 8vw, 34px);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .spotlightLink:hover {
+    transform: none;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlightLink,
+  .spotlightLink::before,
+  .spotlightLink .arrow {
+    transition-duration: 0.01ms;
+  }
+
+  .spotlightLink:hover {
+    transform: none;
   }
 }

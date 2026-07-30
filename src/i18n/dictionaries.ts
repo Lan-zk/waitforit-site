@@ -10,6 +10,8 @@ const dictionaries = {
       ariaLabel: '主导航',
       blog: '博客',
       contact: '联系',
+      email: '发送邮件',
+      github: '打开 GitHub',
       home: '首页',
       novel: '小说',
       photography: '摄影',
@@ -22,9 +24,6 @@ const dictionaries = {
       simplifiedChinese: '中',
       switchToEnglish: '切换为英语',
       switchToSimplifiedChinese: '切换为简体中文',
-    },
-    time: {
-      localTime: '本地时间',
     },
     scene: {
       explore: '拖动浏览 · 点按查看',
@@ -69,6 +68,8 @@ const dictionaries = {
       ariaLabel: 'Primary navigation',
       blog: 'Blog',
       contact: 'Contact',
+      email: 'Send email',
+      github: 'Open GitHub',
       home: 'Home',
       novel: 'Novel',
       photography: 'Photography',
@@ -81,9 +82,6 @@ const dictionaries = {
       simplifiedChinese: '中',
       switchToEnglish: 'Switch to English',
       switchToSimplifiedChinese: 'Switch to Simplified Chinese',
-    },
-    time: {
-      localTime: 'Local time',
     },
     scene: {
       explore: 'Drag · Tap to reveal',

@@ -57,20 +57,23 @@ export function ReadingBackground({ kind }: ReadingBackgroundProps) {
       aria-hidden="true"
       className={`${styles.background} ${styles[kind]}`}
       data-reading-background={mode}
+      data-reading-kind={kind}
     >
       {active && kind === 'blog' ? (
         <SideRays
-          blend={0.7}
+          blend={0.75}
           className={styles.canvas}
-          falloff={1.75}
-          intensity={0.72}
+          falloff={1.6}
+          intensity={2}
           onError={handleError}
-          opacity={0.28}
-          rayColor1="#002FA7"
-          rayColor2="#B8C4FF"
-          saturation={1.1}
-          speed={1.1}
-          spread={1.25}
+          opacity={1}
+          origin="top-right"
+          rayColor1="#EAB308"
+          rayColor2="#96c8ff"
+          saturation={1.5}
+          speed={2.5}
+          spread={2}
+          tilt={0}
         />
       ) : null}
       {active && kind === 'novel' ? (

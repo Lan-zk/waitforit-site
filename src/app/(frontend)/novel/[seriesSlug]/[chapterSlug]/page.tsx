@@ -101,6 +101,7 @@ export default async function NovelChapter({
           documentTitle={chapter.title}
           externalLinkLabel={dictionary.pages.externalLink}
           markdown={markdown}
+          revealOnScroll
           sourcePath={chapter.sourcePath}
         />
       </article>

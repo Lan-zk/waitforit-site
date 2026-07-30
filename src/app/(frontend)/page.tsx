@@ -34,12 +34,13 @@ export default async function HomePage() {
       <GradientOverlays />
       <SiteHeader
         brandName={site.brandName}
-        contactHref={site.email ? `mailto:${site.email}` : undefined}
+        emailHref={site.email ? `mailto:${site.email}` : undefined}
+        githubHref={site.githubURL}
         labels={{
-          contact: dictionary.navigation.contact,
+          email: dictionary.navigation.email,
+          github: dictionary.navigation.github,
           home: dictionary.navigation.home,
           language: dictionary.language,
-          localTime: dictionary.time.localTime,
           navigation: dictionary.navigation.ariaLabel,
         }}
         locale={locale}

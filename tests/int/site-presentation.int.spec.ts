@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   filterPublicNavigation,
   normalizeHttpURL,
+  withNovelNavigation,
 } from '@/utilities/sitePresentation'
 
 describe('site presentation', () => {
@@ -39,5 +40,27 @@ describe('site presentation', () => {
     expect(normalizeHttpURL('javascript:alert(1)')).toBeNull()
     expect(normalizeHttpURL('/projects')).toBeNull()
     expect(normalizeHttpURL('')).toBeNull()
+  })
+
+  it('adds the novel route before the resume route without duplicating it', () => {
+    expect(
+      withNovelNavigation([
+        { href: '/projects', label: 'Work' },
+        { href: '/blog', label: 'Blog' },
+        { href: '/resume', label: 'Resume' },
+      ]),
+    ).toEqual([
+      { href: '/projects', label: 'Work' },
+      { href: '/blog', label: 'Blog' },
+      { href: '/novel', label: 'Novel' },
+      { href: '/resume', label: 'Resume' },
+    ])
+
+    const existing = [
+      { href: '/novel', label: 'Fiction' },
+      { href: '/resume', label: 'Resume' },
+    ]
+
+    expect(withNovelNavigation(existing)).toEqual(existing)
   })
 })

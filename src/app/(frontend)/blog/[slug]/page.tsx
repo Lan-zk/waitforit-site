@@ -58,6 +58,7 @@ export default async function PostDetail({
           documentTitle={doc.title}
           externalLinkLabel={dictionary.pages.externalLink}
           markdown={markdown}
+          revealOnScroll
           sourcePath={doc.sourcePath}
         />
       </article>

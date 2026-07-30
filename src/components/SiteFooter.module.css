@@ -104,40 +104,47 @@
 }
 
 .documentFooter {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-  gap: clamp(32px, 6vw, 96px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px clamp(24px, 4vw, 56px);
   border-block-start: 1px solid var(--line-strong);
-  padding: clamp(36px, 6vw, 72px) clamp(24px, 6vw, 96px);
+  padding: 24px clamp(24px, 6vw, 96px);
   background: var(--surface-deep);
 }
 
 .documentIntro {
-  display: grid;
-  align-content: start;
-  gap: 16px;
+  display: flex;
+  flex: 1 1 360px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
 }
 
 .description {
   max-width: 48ch;
   margin: 0;
   color: var(--ink-secondary);
-  font-size: clamp(16px, 1.3vw, 19px);
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .documentEmail {
   width: fit-content;
   color: var(--focus-blue);
+  font-size: 14px;
   text-decoration: underline;
   text-underline-offset: 0.25em;
 }
 
 .documentNav {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-content: start;
-  gap: 10px 20px;
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  font-size: 14px;
 }
 
 .documentNav a,
@@ -165,12 +172,9 @@
 
 .documentMeta {
   display: flex;
-  grid-column: 1 / -1;
+  flex: 0 1 auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  border-block-start: 1px solid var(--line);
-  padding-block-start: 24px;
+  gap: 12px 20px;
   color: var(--ink-muted);
   font-size: 13px;
 }
@@ -188,15 +192,25 @@
   }
 
   .documentFooter {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    padding: 40px 24px 112px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+    padding: 22px 24px 88px;
+  }
+
+  .documentIntro {
+    flex: 0 1 auto;
+    gap: 6px 16px;
+  }
+
+  .documentNav,
+  .documentMeta {
+    width: 100%;
   }
 
   .documentMeta {
-    grid-column: 1;
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .socialLinks {

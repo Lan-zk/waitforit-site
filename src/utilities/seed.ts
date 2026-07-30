@@ -101,6 +101,7 @@ async function seed() {
       nav: [
         { label: 'Work', href: '/projects' },
         { label: 'Blog', href: '/blog' },
+        { label: 'Novel', href: '/novel' },
         { label: 'Resume', href: '/resume' },
       ],
     },
@@ -120,6 +121,7 @@ async function seed() {
       description: 'Personal site',
       url: 'http://localhost:3000',
       email: 'hello@example.com',
+      social: [{ label: 'GitHub', url: 'https://github.com/Lan-zk' }],
     },
   })
   console.log('set site-settings global')

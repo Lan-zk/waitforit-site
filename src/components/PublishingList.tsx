@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import type { PointerEvent } from 'react'
 
 import styles from './PublishingList.module.css'
 
@@ -9,12 +12,53 @@ export interface PublishingListItem {
   title: string
 }
 
-export function PublishingList({ items }: { items: PublishingListItem[] }) {
+interface PublishingListProps {
+  items: PublishingListItem[]
+  variant?: 'row' | 'spotlight'
+}
+
+function updateSpotlight(event: PointerEvent<HTMLAnchorElement>) {
+  if (event.pointerType === 'touch') {
+    return
+  }
+
+  const rect = event.currentTarget.getBoundingClientRect()
+
+  event.currentTarget.style.setProperty(
+    '--spotlight-x',
+    `${event.clientX - rect.left}px`,
+  )
+  event.currentTarget.style.setProperty(
+    '--spotlight-y',
+    `${event.clientY - rect.top}px`,
+  )
+  event.currentTarget.style.setProperty('--spotlight-opacity', '1')
+}
+
+function clearSpotlight(event: PointerEvent<HTMLAnchorElement>) {
+  event.currentTarget.style.setProperty('--spotlight-opacity', '0')
+}
+
+export function PublishingList({
+  items,
+  variant = 'row',
+}: PublishingListProps) {
+  const spotlight = variant === 'spotlight'
+
   return (
-    <ol className={styles.list}>
+    <ol className={`${styles.list} ${spotlight ? styles.spotlightList : ''}`}>
       {items.map((item, index) => (
-        <li className={styles.item} key={item.href}>
-          <Link className={styles.link} href={item.href}>
+        <li
+          className={`${styles.item} ${spotlight ? styles.spotlightItem : ''}`}
+          key={item.href}
+        >
+          <Link
+            className={`${styles.link} ${spotlight ? styles.spotlightLink : ''}`}
+            data-spotlight-card={spotlight ? '' : undefined}
+            href={item.href}
+            onPointerLeave={spotlight ? clearSpotlight : undefined}
+            onPointerMove={spotlight ? updateSpotlight : undefined}
+          >
             <span aria-hidden="true" className={styles.index}>
               {String(index + 1).padStart(2, '0')}
             </span>

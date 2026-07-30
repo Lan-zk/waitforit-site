@@ -45,12 +45,13 @@ export async function ContentPage({
     <>
       <SiteHeader
         brandName={site.brandName}
-        contactHref={site.email ? `mailto:${site.email}` : undefined}
+        emailHref={site.email ? `mailto:${site.email}` : undefined}
+        githubHref={site.githubURL}
         labels={{
-          contact: dictionary.navigation.contact,
+          email: dictionary.navigation.email,
+          github: dictionary.navigation.github,
           home: dictionary.navigation.home,
           language: dictionary.language,
-          localTime: dictionary.time.localTime,
           navigation: dictionary.navigation.ariaLabel,
         }}
         locale={locale}
@@ -70,14 +71,16 @@ export async function ContentPage({
         </header>
         <div className={styles.content}>{children}</div>
       </main>
-      <SiteFooter
-        copyright={site.copyright}
-        description={site.description}
-        email={site.email}
-        nav={footerNav}
-        social={site.social}
-        variant="document"
-      />
+      {variant === 'reading' ? null : (
+        <SiteFooter
+          copyright={site.copyright}
+          description={site.description}
+          email={site.email}
+          nav={footerNav}
+          social={site.social}
+          variant="document"
+        />
+      )}
     </>
   )
 }

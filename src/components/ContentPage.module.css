@@ -15,6 +15,15 @@
   backdrop-filter: blur(2px);
 }
 
+:global([data-reading-kind="blog"]) + .readingPage {
+  background: rgb(14 14 14 / 18%);
+  backdrop-filter: none;
+}
+
+.readingPage + :global(footer) {
+  display: none;
+}
+
 .readingPage .pageHeader,
 .readingPage .content {
   max-width: 720px;

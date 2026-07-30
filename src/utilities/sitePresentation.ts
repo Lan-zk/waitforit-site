@@ -8,6 +8,8 @@ export interface PublicNavigationItem {
   label: string
 }
 
+export const DEFAULT_GITHUB_URL = 'https://github.com/Lan-zk'
+
 export function isPhotographyHref(href: string): boolean {
   return href === '/photography' || href.startsWith('/photography/')
 }
@@ -33,6 +35,27 @@ export function filterPublicNavigation(
 
     return [{ href, label }]
   })
+}
+
+export function withNovelNavigation(
+  items: PublicNavigationItem[],
+): PublicNavigationItem[] {
+  if (items.some(({ href }) => href === '/novel')) {
+    return items
+  }
+
+  const resumeIndex = items.findIndex(({ href }) => href === '/resume')
+  const novelItem = { href: '/novel', label: 'Novel' }
+
+  if (resumeIndex === -1) {
+    return [...items, novelItem]
+  }
+
+  return [
+    ...items.slice(0, resumeIndex),
+    novelItem,
+    ...items.slice(resumeIndex),
+  ]
 }
 
 export function normalizeHttpURL(

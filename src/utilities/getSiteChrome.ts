@@ -3,9 +3,11 @@ import { cache } from 'react'
 import { getPayload } from 'payload'
 
 import {
+  DEFAULT_GITHUB_URL,
   filterPublicNavigation,
   normalizeHttpURL,
   type PublicNavigationItem,
+  withNovelNavigation,
 } from './sitePresentation'
 
 export interface SiteChromeData {
@@ -14,6 +16,7 @@ export interface SiteChromeData {
   description: string
   email: string
   footerNav: PublicNavigationItem[]
+  githubURL: string
   headerNav: PublicNavigationItem[]
   siteURL: null | string
   social: Array<{
@@ -67,7 +70,17 @@ export const getSiteChrome = cache(async (): Promise<SiteChromeData> => {
     description: settings.description?.trim() || '',
     email: footer.email?.trim() || settings.email?.trim() || '',
     footerNav: filterPublicNavigation(footer.nav),
-    headerNav: filterPublicNavigation(header.nav),
+    githubURL:
+      social.find(({ label, url }) => {
+        const hostname = new URL(url).hostname.toLowerCase()
+
+        return (
+          label.toLowerCase() === 'github' ||
+          hostname === 'github.com' ||
+          hostname === 'www.github.com'
+        )
+      })?.url ?? DEFAULT_GITHUB_URL,
+    headerNav: withNovelNavigation(filterPublicNavigation(header.nav)),
     siteURL: normalizeHttpURL(settings.url),
     social,
   }

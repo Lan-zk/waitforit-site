@@ -8,7 +8,9 @@ test('defaults to Simplified Chinese and persists an English selection', async (
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN')
   await expect(page.getByRole('navigation', { name: '主导航' })).toBeVisible()
-  await expect(page.getByRole('link', { name: '联系' })).toBeVisible()
+  await expect(page.getByRole('link', { name: '小说' })).toBeVisible()
+  await expect(page.getByRole('link', { name: '打开 GitHub' })).toBeVisible()
+  await expect(page.getByRole('link', { name: '发送邮件' })).toBeVisible()
   await expect(page.getByText('总览', { exact: true })).toBeVisible()
 
   const englishButton = page.getByRole('button', { name: '切换为英语' })
@@ -19,7 +21,9 @@ test('defaults to Simplified Chinese and persists an English selection', async (
   await expect(
     page.getByRole('navigation', { name: 'Primary navigation' }),
   ).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Contact' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Novel' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Open GitHub' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Send email' })).toBeVisible()
   await expect(page.getByText('Overview', { exact: true })).toBeVisible()
   await expect(
     page.getByRole('button', { name: 'Switch to English' }),
