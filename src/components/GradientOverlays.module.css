@@ -4,6 +4,21 @@
   pointer-events: none;
 }
 
+.overlays {
+  transition: opacity 600ms ease;
+}
+
+/* Hidden while the homepage intro plays; revealed once the gallery settles. */
+:root[data-site-intro="scene"] .overlays {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlays {
+    transition-duration: 0.01ms;
+  }
+}
+
 .topOverlay,
 .bottomOverlay {
   position: fixed;

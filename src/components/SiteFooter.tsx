@@ -31,11 +31,13 @@ export function SiteFooter({ email, indexHref, labels }: SiteFooterProps) {
         <span aria-hidden="true" />
       )}
 
-      <span className={styles.sceneLabel}>{labels.overview}</span>
+      <div className={styles.footerActions}>
+        <span className={styles.sceneLabel}>{labels.overview}</span>
 
-      <a className={styles.indexLink} href={indexHref}>
-        <SwappingLabel>{labels.index}</SwappingLabel>
-      </a>
+        <a className={styles.indexLink} href={indexHref}>
+          <SwappingLabel>{labels.index}</SwappingLabel>
+        </a>
+      </div>
     </footer>
   );
 }

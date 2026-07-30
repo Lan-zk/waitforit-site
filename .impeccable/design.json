@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-29T07:09:55.172Z",
+  "generatedAt": "2026-07-30T02:06:59.639Z",
   "title": "Design System: Wait For It",
   "extensions": {
     "colorMeta": {
@@ -212,6 +212,11 @@
         "name": "reduced-motion",
         "value": "0.01ms",
         "purpose": "Effectively immediate transitions when reduced motion is requested."
+      },
+      {
+        "name": "site-intro-reveal",
+        "value": "600ms ease",
+        "purpose": "Header, footer, and gradient veils fade in after the homepage gallery intro settles."
       }
     ],
     "breakpoints": [
@@ -299,6 +304,20 @@
       "description": "Quiet directional reading control that reveals a tonal fill and accent on interaction.",
       "html": "<a class=\"ds-chapter-link\" href=\"#\"><span class=\"ds-chapter-label\">NEXT →</span><span class=\"ds-chapter-title\">The following chapter</span></a>",
       "css": ".ds-chapter-link{display:grid;gap:8px;border-radius:4px;padding:12px;color:#fff;text-decoration:none;transition:color 180ms ease,background 180ms ease}.ds-chapter-link:hover,.ds-chapter-link:focus-visible{background:rgb(255 255 255 / 8%);color:#ddfa42}.ds-chapter-link:focus-visible{outline:2px solid #ddfa42;outline-offset:3px}.ds-chapter-label{color:rgb(255 255 255 / 50%);font-family:Mabry,sans-serif;font-size:13px;letter-spacing:.04em;text-transform:uppercase}.ds-chapter-title{font-family:\"FK Display\",sans-serif;font-size:clamp(20px,2.4vw,32px);line-height:1.1}"
+    },
+    {
+      "name": "Index Pill",
+      "kind": "nav",
+      "description": "Footer index link: a translucent capsule whose label swaps vertically on hover, paired with the plain Overview text at the bottom-right of the homepage stage.",
+      "html": "<a class=\"ds-index-pill\" href=\"#\"><span class=\"ds-index-pill-viewport\"><span class=\"ds-index-pill-track\"><span>Index</span><span aria-hidden=\"true\">Index</span></span></span></a>",
+      "css": ".ds-index-pill { display: block; overflow: hidden; padding: 0.5rem 1rem; border-radius: 999px; background: rgb(255 255 255 / 12%); color: #fff; font-family: \"FK Display\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif; font-size: 15.8197px; line-height: 17.4017px; text-decoration: none; white-space: nowrap; backdrop-filter: blur(8px); } .ds-index-pill-viewport { display: block; height: 17.4017px; overflow: hidden; } .ds-index-pill-track { display: flex; flex-direction: column; transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-index-pill-track > span { display: block; flex: 0 0 17.4017px; } .ds-index-pill:hover .ds-index-pill-track, .ds-index-pill:focus-visible .ds-index-pill-track { transform: translateY(-17.4017px); } @media (prefers-reduced-motion: reduce) { .ds-index-pill-track { transition-duration: 0.01ms; } }"
+    },
+    {
+      "name": "Scene Loader",
+      "kind": "custom",
+      "description": "First-visit homepage veil: a press-black full-viewport overlay with a single centered display-size percentage counter, cross-fading out before the 3D gallery streams in.",
+      "html": "<div class=\"ds-scene-loader\"><span class=\"ds-scene-loader-value\">64</span></div>",
+      "css": ".ds-scene-loader { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #000; color: #fff; } .ds-scene-loader-value { font-family: \"FK Display\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif; font-size: clamp(42px, 8vw, 112px); font-weight: 400; font-variant-numeric: tabular-nums; line-height: 0.94; letter-spacing: -0.02em; }"
     }
   ],
   "narrative": {

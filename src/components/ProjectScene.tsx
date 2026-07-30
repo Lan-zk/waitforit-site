@@ -1,5 +1,6 @@
 "use client";
 
+import gsap from "gsap";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
@@ -16,13 +17,15 @@ const TEXTURE_SLOT_END = 10.25;
 const MAX_TEXTURES = 20;
 const MIN_RENDER_INSTANCES = 20;
 
-// Card sizing: shrink every card toward a shared factor, then clamp the result
-// into a per-breakpoint [min, max] band so sizes vary without becoming chaotic.
-const CARD_WIDTH_SCALE = 0.7;
-const DESKTOP_CARD_MIN_WIDTH = 15;
-const DESKTOP_CARD_MAX_WIDTH = 30;
-const MOBILE_CARD_MIN_WIDTH = 46;
-const MOBILE_CARD_MAX_WIDTH = 96;
+// Card sizing: every card shares one world-space width; height follows each
+// image's own aspect ratio, so heights differ only slightly. Perspective
+// shrink comes from the z gradient alone (no per-slot width ramp).
+const DESKTOP_CARD_WIDTH = 27;
+const MOBILE_CARD_WIDTH = 88;
+
+// Intro: the gallery starts this many slots up-ribbon (top-right) and tweens
+// to 0 once the loader finishes, so cards stream in toward the bottom-left.
+const INTRO_START_PROGRESS = -7;
 
 // Trajectory framing: recentre the visible band on the screen middle, spread
 // the (now smaller) cards out so neighbours keep clear gaps, and lift the band
@@ -66,6 +69,11 @@ type MeshRuntime = {
   baseZ: number;
   baseWidth: number;
   baseHeight: number;
+  // Smoothed 0→1 fade-in once the texture arrives (avoids cards popping in),
+  // plus lerped hover lift/scale so hovering never jumps.
+  appear: number;
+  hoverLift: number;
+  hoverScale: number;
 };
 
 const desktopPlacements: Record<number, Placement> = {
@@ -290,10 +298,6 @@ const mobilePlacements: Record<number, Placement> = {
   },
 };
 
-function interpolate(start: number, end: number, amount: number) {
-  return start + (end - start) * amount;
-}
-
 function placementForSlot(slot: number, mobile: boolean): Placement {
   const placements = mobile ? mobilePlacements : desktopPlacements;
   const knownPlacement = placements[slot];
@@ -331,17 +335,28 @@ function placementForSlot(slot: number, mobile: boolean): Placement {
   };
 }
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
+// Smooth keyframe interpolation: linear segments make position/rotation
+// velocity jump at every keyframe ("cards hopping"). Catmull-Rom keeps the
+// first derivative continuous through keyframes, so scrolling glides.
+function catmullRom(p0: number, p1: number, p2: number, p3: number, t: number) {
+  const t2 = t * t;
+  const t3 = t2 * t;
+
+  return (
+    0.5 *
+    (2 * p1 +
+      (-p0 + p2) * t +
+      (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+      (-p0 + 3 * p1 - 3 * p2 + p3) * t3)
+  );
 }
 
-// Reframe a raw placement: shrink the card around its own center, clamp its
-// width into the allowed band, recentre and spread the band so neighbours keep
-// clear gaps, lift it upward, and rebase the tilt onto a coherent ribbon.
-// Applied uniformly so extrapolated slots match.
+// Reframe a raw placement: every card renders at one shared width (the raw
+// per-slot width only shapes the trajectory centre), recentre and spread the
+// band so neighbours keep clear gaps, lift it upward, and rebase the tilt onto
+// a coherent ribbon. Applied uniformly so extrapolated slots match.
 function adjustPlacement(placement: Placement, mobile: boolean): Placement {
-  const minWidth = mobile ? MOBILE_CARD_MIN_WIDTH : DESKTOP_CARD_MIN_WIDTH;
-  const maxWidth = mobile ? MOBILE_CARD_MAX_WIDTH : DESKTOP_CARD_MAX_WIDTH;
+  const width = mobile ? MOBILE_CARD_WIDTH : DESKTOP_CARD_WIDTH;
   const pivotX = mobile
     ? MOBILE_TRAJECTORY_PIVOT_X
     : DESKTOP_TRAJECTORY_PIVOT_X;
@@ -357,7 +372,6 @@ function adjustPlacement(placement: Placement, mobile: boolean): Placement {
   const lift = mobile ? MOBILE_VERTICAL_LIFT : DESKTOP_VERTICAL_LIFT;
 
   const centerX = placement.x + placement.width / 2;
-  const width = clamp(placement.width * CARD_WIDTH_SCALE, minWidth, maxWidth);
   const x = HORIZONTAL_CENTER + (centerX - pivotX) * scaleX - width / 2;
   const y = pivotY + (placement.y - pivotY) * scaleY - lift;
 
@@ -373,22 +387,27 @@ function adjustPlacement(placement: Placement, mobile: boolean): Placement {
 }
 
 function placementAt(relativeSlot: number, mobile: boolean): Placement {
-  const lowerSlot = Math.floor(relativeSlot);
-  const amount = relativeSlot - lowerSlot;
-  const lower = placementForSlot(lowerSlot, mobile);
-  const upper = placementForSlot(lowerSlot + 1, mobile);
+  const baseSlot = Math.floor(relativeSlot);
+  const t = relativeSlot - baseSlot;
+  const p0 = placementForSlot(baseSlot - 1, mobile);
+  const p1 = placementForSlot(baseSlot, mobile);
+  const p2 = placementForSlot(baseSlot + 1, mobile);
+  const p3 = placementForSlot(baseSlot + 2, mobile);
+  const spline = (field: keyof Placement) =>
+    catmullRom(p0[field], p1[field], p2[field], p3[field], t);
 
-  const interpolated: Placement = {
-    x: interpolate(lower.x, upper.x, amount),
-    y: interpolate(lower.y, upper.y, amount),
-    width: interpolate(lower.width, upper.width, amount),
-    z: interpolate(lower.z, upper.z, amount),
-    rotateX: interpolate(lower.rotateX, upper.rotateX, amount),
-    rotateY: interpolate(lower.rotateY, upper.rotateY, amount),
-    rotateZ: interpolate(lower.rotateZ, upper.rotateZ, amount),
-  };
-
-  return adjustPlacement(interpolated, mobile);
+  return adjustPlacement(
+    {
+      x: spline("x"),
+      y: spline("y"),
+      width: spline("width"),
+      z: spline("z"),
+      rotateX: spline("rotateX"),
+      rotateY: spline("rotateY"),
+      rotateZ: spline("rotateZ"),
+    },
+    mobile,
+  );
 }
 
 function wrappedRelativeSlot(index: number, progress: number, projects: ProjectTexture[]) {
@@ -478,6 +497,8 @@ export function ProjectScene({
   const hoverLabelRef = useRef<HTMLDivElement>(null);
   const interactionHintRef = useRef<HTMLParagraphElement>(null);
   const mobileCardLinkRef = useRef<HTMLAnchorElement>(null);
+  const loaderRef = useRef<HTMLDivElement>(null);
+  const loaderValueRef = useRef<HTMLSpanElement>(null);
   const accessibleProjects = Array.from(
     new Map(projects.map((project) => [project.slug, project])).values(),
   );
@@ -487,12 +508,24 @@ export function ProjectScene({
     const hoverLabel = hoverLabelRef.current;
     const interactionHint = interactionHintRef.current;
     const mobileCardLink = mobileCardLinkRef.current;
+    const loader = loaderRef.current;
+    const loaderValue = loaderValueRef.current;
 
-    if (!canvas || !hoverLabel || !interactionHint || !mobileCardLink) {
+    if (
+      !canvas ||
+      !hoverLabel ||
+      !interactionHint ||
+      !mobileCardLink ||
+      !loader ||
+      !loaderValue
+    ) {
       return;
     }
 
     const renderProjects = buildRenderProjects(projects);
+    // While the intro runs, the rest of the homepage (header/footer/overlays)
+    // stays hidden; only the 3D canvas plays. Flips to "done" afterwards.
+    document.documentElement.dataset.siteIntro = "scene";
     canvas.dataset.webglUnavailable = "false";
     canvas.dataset.contextState = "initializing";
     canvas.dataset.sceneInstanceCount = String(renderProjects.length);
@@ -511,6 +544,7 @@ export function ProjectScene({
     ) {
       canvas.dataset.webglUnavailable = "true";
       canvas.dataset.contextState = "unavailable";
+      loader.style.display = "none";
       return;
     }
 
@@ -577,6 +611,9 @@ export function ProjectScene({
         baseZ: 0,
         baseWidth: 1,
         baseHeight: 1,
+        appear: 0,
+        hoverLift: 0,
+        hoverScale: 1,
       } satisfies MeshRuntime;
       projectGroup.add(mesh);
       return mesh;
@@ -587,8 +624,12 @@ export function ProjectScene({
     const pendingTextures = new Map<string, number>();
     const raycaster = new THREE.Raycaster();
     const pointerNdc = new THREE.Vector2();
-    const targetProgress = { value: 0 };
-    const currentProgress = { value: 0 };
+    const introProgress = { value: INTRO_START_PROGRESS };
+    // 0→1 gate driving the staggered card entrance: cards at the top-right
+    // end of the ribbon appear first, the bottom-left ones last.
+    const introT = { value: 0 };
+    const targetProgress = { value: INTRO_START_PROGRESS };
+    const currentProgress = { value: INTRO_START_PROGRESS };
     const pointerTarget = { x: 0, y: 0 };
     const pointerCurrent = { x: 0, y: 0 };
     const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -612,6 +653,10 @@ export function ProjectScene({
     let lastPointerX = 0;
     let lastPointerY = 0;
     let dragging = false;
+    let introStarted = false;
+    let introComplete = false;
+    let introTimeline: gsap.core.Timeline | null = null;
+    let preloadSettled = 0;
 
     const clearHover = () => {
       hoveredIndex = null;
@@ -677,12 +722,14 @@ export function ProjectScene({
 
         if (disposed || !desiredTextureKeys.has(textureKey)) {
           texture.dispose();
+          notePreloadSettled(textureKey);
           return;
         }
 
         textureCache.set(textureKey, texture);
         applyTexture(textureKey, texture);
         updateTextureCount();
+        notePreloadSettled(textureKey);
 
         if (textureCache.size > MAX_TEXTURES) {
           for (const staleKey of textureCache.keys()) {
@@ -695,9 +742,110 @@ export function ProjectScene({
       } catch {
         if (pendingTextures.get(textureKey) === requestId) {
           pendingTextures.delete(textureKey);
+          notePreloadSettled(textureKey);
         }
       }
     };
+
+    // Loader: preload the textures covering both ends of the intro travel
+    // (start offset and resting position), count them into the percentage,
+    // then reveal the scene and tween the ribbon from top-right to rest.
+    const textureKeysAt = (progress: number) => {
+      const keys = new Set<string>();
+
+      renderProjects.forEach((project, index) => {
+        const slot = wrappedRelativeSlot(index, progress, renderProjects);
+
+        if (slot > TEXTURE_SLOT_START && slot < TEXTURE_SLOT_END) {
+          keys.add(project.localPath);
+        }
+      });
+
+      return keys;
+    };
+
+    const preloadKeys = new Set<string>([
+      ...textureKeysAt(INTRO_START_PROGRESS),
+      ...textureKeysAt(0),
+    ]);
+    const preloadPending = new Set(preloadKeys);
+    const preloadTotal = preloadKeys.size;
+
+    const notePreloadSettled = (textureKey: string) => {
+      if (!preloadPending.has(textureKey) || introStarted) {
+        return;
+      }
+
+      preloadPending.delete(textureKey);
+      preloadSettled += 1;
+      loaderValue.textContent = String(
+        Math.round((preloadSettled / Math.max(1, preloadTotal)) * 100),
+      );
+
+      if (preloadPending.size === 0) {
+        startIntro();
+      }
+    };
+
+    const startIntro = () => {
+      if (introStarted) {
+        return;
+      }
+
+      introStarted = true;
+      window.clearTimeout(introFallbackTimer);
+
+      if (reducedMotion || disposed) {
+        introProgress.value = 0;
+        introT.value = 1;
+        targetProgress.value = 0;
+        currentProgress.value = 0;
+        introComplete = true;
+        loader.style.display = "none";
+        document.documentElement.dataset.siteIntro = "done";
+        return;
+      }
+
+      introTimeline = gsap.timeline({
+        onComplete: () => {
+          introComplete = true;
+          introTimeline = null;
+          // Gallery settled → reveal the rest of the homepage.
+          document.documentElement.dataset.siteIntro = "done";
+        },
+      });
+      // Sequence matters: the overlay fades out first, then the ribbon
+      // streams from the top-right down to its resting layout while the
+      // 0→1 gate opens cards from the far end towards the near end.
+      introTimeline
+        .to(loader, {
+          autoAlpha: 0,
+          duration: 0.7,
+          ease: "power2.out",
+          delay: 0.3,
+        })
+        .set(loader, { display: "none" })
+        .to(introProgress, {
+          value: 0,
+          duration: 2.2,
+          ease: "power2.inOut",
+          onUpdate: () => {
+            targetProgress.value = introProgress.value;
+            currentProgress.value = introProgress.value;
+          },
+        })
+        .to(
+          introT,
+          {
+            value: 1,
+            duration: 2.2,
+            ease: "none",
+          },
+          "<",
+        );
+    };
+
+    const introFallbackTimer = window.setTimeout(startIntro, 9000);
 
     const syncTextureWindow = (progress: number) => {
       const candidates = renderProjects
@@ -715,12 +863,17 @@ export function ProjectScene({
             Math.abs(a.relativeSlot) - Math.abs(b.relativeSlot),
         )
         .slice(0, MAX_TEXTURES);
+      const windowKeys = candidates.map(
+        ({ index }) => renderProjects[index].localPath,
+      );
+      // Until the intro finishes, keep every preloaded key desired so the
+      // sliding window cannot evict textures the reveal animation needs.
       const nextKeys = Array.from(
         new Set(
-          candidates.map(({ index }) => renderProjects[index].localPath),
+          introComplete ? windowKeys : [...windowKeys, ...preloadKeys],
         ),
       )
-        .slice(0, MAX_TEXTURES)
+        .slice(0, introComplete ? MAX_TEXTURES : MAX_TEXTURES + 12)
         .sort();
       const nextKey = nextKeys.join(",");
 
@@ -766,13 +919,23 @@ export function ProjectScene({
           progress,
           renderProjects,
         );
+        // Intro entrance gate: slots near the top-right end of the visible
+        // band open first, slots toward the bottom-left open last, so the
+        // gallery fills 0→1 as it streams in.
+        const slotGate =
+          ((VISIBLE_SLOT_END - relativeSlot) /
+            (VISIBLE_SLOT_END - VISIBLE_SLOT_START)) *
+          0.85;
+        const introOpen = introComplete || introT.value >= slotGate;
         const visible =
           relativeSlot > VISIBLE_SLOT_START &&
           relativeSlot < VISIBLE_SLOT_END &&
-          textureCache.has(renderProjects[index].localPath);
+          textureCache.has(renderProjects[index].localPath) &&
+          introOpen;
 
         if (!visible) {
           mesh.visible = false;
+          (mesh.userData.runtime as MeshRuntime).appear = 0;
           return;
         }
 
@@ -796,6 +959,9 @@ export function ProjectScene({
         runtime.baseZ = placement.z;
         runtime.baseWidth = world.width;
         runtime.baseHeight = world.height;
+        runtime.appear = reducedMotion
+          ? 1
+          : runtime.appear + (1 - runtime.appear) * 0.08;
         mesh.visible = true;
         mesh.position.set(world.x, world.y, placement.z);
         mesh.rotation.set(
@@ -804,7 +970,8 @@ export function ProjectScene({
           THREE.MathUtils.degToRad(-placement.rotateZ),
         );
         mesh.scale.set(world.width, world.height, 1);
-        material.opacity = Math.min(1, edgeFade * 1.75) * GLASS_MAX_OPACITY;
+        material.opacity =
+          Math.min(1, edgeFade * 1.75) * GLASS_MAX_OPACITY * runtime.appear;
         nextVisibleMeshes.push(mesh);
       });
 
@@ -850,12 +1017,21 @@ export function ProjectScene({
         const index = mesh.userData.projectIndex as number;
         const runtime = mesh.userData.runtime as MeshRuntime;
         const hovered = index === hoveredIndex;
-        const hoverScale = hovered ? 1.012 : 1;
+        const targetLift = hovered ? 58 : 0;
+        const targetScale = hovered ? 1.012 : 1;
 
-        mesh.position.z = runtime.baseZ + (hovered ? 58 : 0);
+        if (reducedMotion) {
+          runtime.hoverLift = targetLift;
+          runtime.hoverScale = targetScale;
+        } else {
+          runtime.hoverLift += (targetLift - runtime.hoverLift) * 0.14;
+          runtime.hoverScale += (targetScale - runtime.hoverScale) * 0.14;
+        }
+
+        mesh.position.z = runtime.baseZ + runtime.hoverLift;
         mesh.scale.set(
-          runtime.baseWidth * hoverScale,
-          runtime.baseHeight * hoverScale,
+          runtime.baseWidth * runtime.hoverScale,
+          runtime.baseHeight * runtime.hoverScale,
           1,
         );
       }
@@ -1092,6 +1268,10 @@ export function ProjectScene({
     return () => {
       disposed = true;
       window.cancelAnimationFrame(animationFrame);
+      window.clearTimeout(introFallbackTimer);
+      introTimeline?.kill();
+      introTimeline = null;
+      delete document.documentElement.dataset.siteIntro;
       window.removeEventListener("wheel", handleWheel);
       canvas.removeEventListener("pointerdown", handlePointerDown);
       canvas.removeEventListener("pointermove", handlePointerMove);
@@ -1129,6 +1309,19 @@ export function ProjectScene({
         className={styles.sceneCanvas}
         aria-hidden="true"
       />
+      <div
+        ref={loaderRef}
+        className={styles.sceneLoader}
+        data-scene-loader="true"
+        aria-hidden="true"
+      >
+        <span ref={loaderValueRef} className={styles.sceneLoaderValue}>
+          0
+        </span>
+      </div>
+      <noscript>
+        <style>{"[data-scene-loader] { display: none !important; }"}</style>
+      </noscript>
       <div
         ref={hoverLabelRef}
         className={styles.hoverLabel}

@@ -6,6 +6,15 @@
   z-index: 2000;
   color: #fff;
   pointer-events: none;
+  transition:
+    opacity 600ms ease,
+    visibility 600ms ease;
+}
+
+/* Hidden while the homepage intro plays; revealed once the gallery settles. */
+:root[data-site-intro="scene"] .siteHeader {
+  visibility: hidden;
+  opacity: 0;
 }
 
 .desktopHeader {
@@ -292,6 +301,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .siteHeader,
   .homeLink,
   .brandMark,
   .pill,
