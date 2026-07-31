@@ -18,7 +18,7 @@ COPY . .
 ENV DATABASE_URL=file:./data/build.db
 ENV PAYLOAD_SECRET=build-only-secret-not-for-runtime
 
-RUN mkdir -p data media && npm run build
+RUN mkdir -p data media && npm run build:container
 
 FROM base AS content-sync
 
