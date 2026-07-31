@@ -242,6 +242,7 @@ title: 抵达
 - `title` 必填。
 - `language` 用于正文 `lang` 属性，不触发内容翻译；小说章节默认继承作品语言。
 - `summary`、`publishedAt`、`cover` 按页面需要选填。
+- `publishedAt` 只用于展示和排序；内容是否公开仅由其是否存在于发布仓库默认分支决定。
 - slug、内容类型、所属小说和章节顺序由目录结构推导，避免重复配置。
 
 ## 6. Payload 目标模型

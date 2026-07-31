@@ -35,6 +35,8 @@ Git Markdown 正文和 Payload 元数据分离的模型。
 
 正文不写入 SQLite，也不在 Payload Admin 中编辑。发布仓库默认分支中的 Markdown 是正文
 真源，Payload 只保存路由、列表和关系查询所需元数据。
+内容一旦进入发布仓库默认分支就视为公开发布；`publishedAt` 只用于日期展示和排序，
+不控制可见性，也不提供草稿、审批或定时发布语义。
 
 两个 Collection 允许匿名读取，普通 REST/GraphQL 创建、更新和删除均被拒绝。同步程序通过
 受信任的服务端 Local API 写入。当前模型不使用 Payload drafts、versions 或 localized
