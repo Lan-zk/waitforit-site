@@ -5,7 +5,7 @@ WORKDIR /app
 
 FROM base AS deps
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc ./
 RUN npm ci
 
 FROM base AS builder
